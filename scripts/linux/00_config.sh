@@ -58,3 +58,42 @@ mkdir -p \
     "${FINAL_BAM_DIR}" \
     "${GVCF_DIR}" \
     "${LOG_DIR}"
+
+
+# -----------------------------
+# Joint genotyping directories
+# -----------------------------
+GENOMICSDB_DIR="${PROJECT_DIR}/results/gvcf/genomicsdb"
+JOINT_VCF_DIR="${PROJECT_DIR}/results/vcf"
+SELECTED_VCF_DIR="${PROJECT_DIR}/results/vcf/selected_variants"
+MAF_DIR="${PROJECT_DIR}/results/maf"
+TMP_DIR="${PROJECT_DIR}/tmp"
+
+# -----------------------------
+# Joint genotyping files
+# -----------------------------
+SAMPLE_MAP="${GVCF_DIR}/gvcf_samples.list"
+INTERVAL_LIST="${REF_DIR}/wgs_calling_regions.hg38.interval_list"
+
+RAW_JOINT_VCF="${JOINT_VCF_DIR}/final_variants.vcf.gz"
+SELECTED_PASS_VCF="${SELECTED_VCF_DIR}/selected_pass_variants.vcf.gz"
+
+# -----------------------------
+# Funcotator
+# -----------------------------
+FUNCOTATOR_DATASOURCE="${REF_DIR}/FuncotatorDataSource/germline_v2/test/funcotator_dataSources.v1.8.hg38.20230908g"
+FUNCOTATOR_REF_VERSION="hg38"
+
+# -----------------------------
+# Computational resources for joint genotyping
+# -----------------------------
+GENOMICSDB_READER_THREADS=64
+GENOMICSDB_BATCH_SIZE=50
+GENOMICSDB_PARALLEL_INTERVALS=10
+
+mkdir -p \
+    "${GENOMICSDB_DIR}" \
+    "${JOINT_VCF_DIR}" \
+    "${SELECTED_VCF_DIR}" \
+    "${MAF_DIR}" \
+    "${TMP_DIR}"
