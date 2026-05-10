@@ -8,7 +8,7 @@ This repository contains Linux shell scripts and R scripts used for developing a
 
 The WGS preprocessing pipeline includes adapter trimming, read alignment, duplicate marking, base quality score recalibration, per-sample GVCF generation, joint genotyping, variant selection, and functional annotation.
 
-The downstream R workflow includes clinical data preprocessing, WGS-derived variant matrix generation, genomic risk score estimation, integrated model training, internal validation, external validation, and publication-ready figure generation.
+The downstream R workflow includes clinical data preprocessing, WGS-derived variant matrix generation, genomic risk score estimation, integrated model training, internal validation, external validation, and visualization.
 
 ## 📁 Repository structure
 
