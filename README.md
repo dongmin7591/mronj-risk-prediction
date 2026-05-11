@@ -34,13 +34,6 @@ mronj-risk-prediction/
 │       ├── 03_internal_validation.R
 │       ├── 04_external_validation.R
 │       └── 05_generate_publication_figures.R
-├── data/
-│   ├── README.md
-│   ├── candidate_variants_template.csv
-│   ├── clinical_variables_template.csv
-│   └── rs_gene_mapping_template.csv
-├── results/
-├── figures/
 ├── README.md
 └── .gitignore
 ```
