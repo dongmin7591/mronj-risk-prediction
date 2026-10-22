@@ -64,7 +64,7 @@ input.txt{width:min(240px,52vw);text-align:left;font-family:var(--f-ui)}
 .ltable th.ck,.ltable td.ck{width:28px;padding-right:0}
 .ltable tr.sel td{background:#EEF5F5}
 .ltools{align-items:center}
-.hfull{margin:0;font-size:clamp(20px,2.8vw,27px);font-weight:500;line-height:1.25;text-wrap:balance}
+.hfull{margin:0;font-size:clamp(20px,2.8vw,27px);font-weight:500;line-height:1.25;white-space:nowrap;text-wrap:nowrap}
 .hfull .ttl b,.sttitle b{font-weight:800;color:var(--accent)}
 .hfull .info{vertical-align:3px;margin-left:6px}
 .wrap[data-view="start"] .hfull,.wrap[data-view="start"] .foot,.wrap[data-view="calc"] .foot{display:none}
@@ -187,7 +187,6 @@ td.mono{font-family:var(--f-data)}
   .tt,.tt-wide{position:fixed;left:max(16px,env(safe-area-inset-left,0px));right:max(16px,env(safe-area-inset-right,0px));
     top:auto;bottom:calc(16px + env(safe-area-inset-bottom,0px));width:auto;font-size:13.5px;padding:12px 14px;z-index:50}
   .tt::before{display:none}
-  .sttitle{white-space:normal;text-wrap:balance;max-width:20ch;font-size:26px}
   .score .num{font-size:38px}
   .vlist{grid-template-columns:1fr 1fr;gap:8px}
   .vlist li{padding:9px 10px}
@@ -636,6 +635,7 @@ function setView(v){
   state.view=v;
   document.querySelector(".wrap").dataset.view = v;
   ["start","in","calc","out","list"].forEach(k=>{ document.getElementById("panel-"+k).hidden = ({start:"start",input:"in",calc:"calc",result:"out",list:"list"})[v]!==k; });
+  fitTitle();
   if (v==="result") renderResult();
   if (v==="list") renderList();
 }
@@ -646,7 +646,19 @@ function show(v){
   if (v==="list") document.getElementById("h-list").focus({preventScroll:true});
   if (v==="input") { const f=document.querySelector("#panel-in .seg button"); if (f) f.focus({preventScroll:true}); }
 }
-function relabel(){ applyStatic(); buildInputs(); if (state.view==="result") renderResult(); if (state.view==="list") renderList(); }
+/* keep the full name on one line: shrink the title font until it fits */
+function fitTitle(){
+  document.querySelectorAll(".hfull,.sttitle").forEach(h=>{
+    if(!h.offsetParent) return;
+    h.style.fontSize=""; let fs=parseFloat(getComputedStyle(h).fontSize);
+    const pr=h.parentElement, ps=getComputedStyle(pr);
+    const avail=Math.min(h.clientWidth||1e9, pr.clientWidth-parseFloat(ps.paddingLeft)-parseFloat(ps.paddingRight));
+    while (h.scrollWidth > avail + 0.5 && fs > 10){ fs -= 0.5; h.style.fontSize = fs+"px"; }
+  });
+}
+window.addEventListener("resize",()=>{ clearTimeout(fitTitle._t); fitTitle._t=setTimeout(fitTitle,80); });
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitTitle);
+function relabel(){ applyStatic(); fitTitle(); buildInputs(); if (state.view==="result") renderResult(); if (state.view==="list") renderList(); }
 
 /* ---------- patient list ---------- */
 let prevView="start", clearArmed=false;
