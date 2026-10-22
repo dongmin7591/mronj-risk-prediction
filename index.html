@@ -46,13 +46,23 @@ header{display:flex;flex-direction:column;gap:8px}
 input.txt{width:min(240px,52vw);text-align:left;font-family:var(--f-ui)}
 .chip.danger{color:#A33A2B;border-color:#E9C9C3}
 .ltable td,.ltable th{white-space:nowrap}
-.ltable td:first-child{font-weight:600}
+.ltable td:nth-child(2){font-weight:600;text-align:left}
+.ltable th:nth-child(2){text-align:left}
 .ltable .grp{font-size:11.5px;font-weight:700;padding:2px 8px;border-radius:999px}
 .ltable .grp.hi{background:#F6E3DF;color:#9B3A2C} .ltable .grp.lo{background:#DFF0F0;color:#1F6E73}
 .ltable .act{display:flex;gap:6px;justify-content:flex-end}
 .ltable .act button{font:inherit;font-size:12px;border:1px solid var(--line);background:var(--surface);border-radius:7px;padding:3px 8px;cursor:pointer;color:var(--ink)}
 .ltable .act button.del{color:#A33A2B}
 .lwrap{overflow-x:auto}
+.lbar{display:flex;align-items:center;flex-wrap:wrap;gap:8px 12px;padding:10px 12px;margin:10px 0 0;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+.selall{display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:600;cursor:pointer}
+.lbar input[type=checkbox],.ltable input[type=checkbox]{width:17px;height:17px;margin:0;accent-color:var(--accent);cursor:pointer}
+.seln{font-size:12.5px;color:var(--muted)}
+.lbtns{display:flex;gap:6px;flex-wrap:wrap;margin-left:auto}
+.chip:disabled{opacity:.42;cursor:default}
+.lmsg{min-height:1.2em;margin:6px 0 0}
+.ltable th.ck,.ltable td.ck{width:28px;padding-right:0}
+.ltable tr.sel td{background:#EEF5F5}
 .ltools{align-items:center}
 .hfull{margin:0;font-size:clamp(20px,2.8vw,27px);font-weight:500;line-height:1.25;text-wrap:balance}
 .hfull .ttl b,.sttitle b{font-weight:800;color:var(--accent)}
@@ -191,6 +201,11 @@ td.mono{font-family:var(--f-data)}
   .ltable td{border:0;padding:0;white-space:normal;text-align:left;font-size:12.5px}
   .ltable td[data-l]::before{content:attr(data-l) "  ";color:var(--muted);font-size:11.5px}
   .ltable td.act{grid-column:1 / -1;justify-content:flex-start;margin-top:4px}
+  .ltable tr{grid-template-columns:auto 1fr auto}
+  .ltable td.ck{grid-row:1 / span 4;padding-top:2px}
+  .ltable td.act{grid-column:2 / -1}
+  .ltable tr.sel td{background:none} .ltable tr.sel{background:#EEF5F5}
+  .lbtns{margin-left:0;width:100%}
   .topr{gap:6px}
   /* projection table becomes one card per setting */
   .ptable thead{display:none}
@@ -284,9 +299,14 @@ td.mono{font-family:var(--f-data)}
       <div class="rhead"><button class="chip back" id="list-back" type="button" data-i18n="backL"></button><button class="chip" id="new-pt2" type="button" data-i18n="newB"></button></div>
       <h2 id="h-list" tabindex="-1"><span data-i18n="listT"></span> <small id="list-sum"></small></h2>
       <p class="note" data-i18n="listNote"></p>
-      <div class="lwrap"><table class="ltable"><thead><tr><th data-i18n="lh1"></th><th data-i18n="lh2"></th><th data-i18n="lh3"></th><th data-i18n="lh4"></th><th data-i18n="lh5"></th><th data-i18n="lh6"></th><th data-i18n="lh7"></th><th></th></tr></thead><tbody id="ltab"></tbody></table></div>
+      <div class="lbar" id="lbar">
+        <label class="selall"><input type="checkbox" id="sel-all"><span data-i18n="selAll"></span></label>
+        <span class="seln" id="sel-n"></span>
+        <span class="lbtns"><button class="chip" id="csv" type="button" disabled></button><button class="chip" id="copy" type="button" disabled></button><button class="chip danger" id="clear" type="button" disabled></button></span>
+      </div>
+      <p class="note lmsg" id="list-msg" role="status"></p>
+      <div class="lwrap"><table class="ltable"><thead><tr><th class="ck"></th><th data-i18n="lh1"></th><th data-i18n="lh2"></th><th data-i18n="lh3"></th><th data-i18n="lh4"></th><th data-i18n="lh5"></th><th data-i18n="lh6"></th><th data-i18n="lh7"></th><th></th></tr></thead><tbody id="ltab"></tbody></table></div>
       <p class="note" id="list-empty" data-i18n="listEmpty" hidden></p>
-      <div class="tools ltools"><button class="chip" id="csv" type="button" data-i18n="csvB"></button><button class="chip" id="copy" type="button" data-i18n="copyB"></button><button class="chip danger" id="clear" type="button" data-i18n="clearB"></button><span class="note" id="list-msg" role="status"></span></div>
     </section>
   </main>
 
@@ -313,8 +333,8 @@ const T = {
   listNote:"Results are saved automatically when a name or ID is entered. They are stored only in this browser on this device and are not sent anywhere. Use an ID instead of a full name on shared or public computers.",
   listEmpty:"No saved results yet. Enter a patient name or ID before viewing the result.",
   lh1:"Name / ID", lh2:"Age", lh3:"Sex", lh4:"Score", lh5:"Group", lh6:"Variants", lh7:"Saved", hiG:"Higher-risk", loG:"Lower-risk",
-  openB:"Open", delB:"Delete", csvB:"Download CSV", copyB:"Copy table", clearB:"Delete all", clearQ:"Select Delete all again to confirm.", copied:"Table copied.", copyFail:"Copy failed. Select the table and copy it manually.", csvDone:"CSV file created.",
-  newB:"New patient", backL:"← Back", saveHint:"Not saved: enter a patient name or ID to add this result to the patient list.", savedMsg:"Saved to patient list",
+  openB:"Open", delB:"Delete", selAll:"Select all", selN:n=>`${n} selected`, csvB:n=>`Download CSV${n?` (${n})`:""}`, copyB:n=>`Copy${n?` (${n})`:""}`, clearB:n=>`Delete${n?` (${n})`:""}`, clearQ:n=>`Select Delete again to remove ${n} patient${n===1?"":"s"}.`, delDone:n=>`${n} deleted.`, copied:"Table copied.", copyFail:"Copy failed. Select the table and copy it manually.", csvDone:"CSV file created.",
+  newB:"New patient", backL:"Back", saveHint:"Not saved: enter a patient name or ID to add this result to the patient list.", savedMsg:"Saved to patient list",
   c_bp:"Bisphosphonate therapy", c_po:"Oral bisphosphonate", c_ext:"History of tooth extraction",
   c_bmi:"BMI category", c_htn:"Hypertension", c_ra:"Rheumatoid arthritis", c_ste:"Systemic glucocorticoid use",
   c_deno:"Denosumab therapy", c_bd:"Both bisphosphonate and denosumab", c_mm:"Total antiresorptive treatment duration", c_imp:"Dental implant placement",
@@ -355,8 +375,8 @@ const T = {
   listNote:"이름이나 ID를 입력하면 결과가 자동으로 저장됩니다. 이 기기의 브라우저에만 저장되며 외부로 전송되지 않습니다. 공용 컴퓨터에서는 실명 대신 ID를 사용하세요.",
   listEmpty:"저장된 결과가 없습니다. 결과를 보기 전에 환자 이름이나 ID를 입력하세요.",
   lh1:"이름 / ID", lh2:"나이", lh3:"성별", lh4:"점수", lh5:"판정", lh6:"보유 변이", lh7:"저장일", hiG:"고위험군", loG:"저위험군",
-  openB:"열기", delB:"삭제", csvB:"CSV 내려받기", copyB:"표 복사", clearB:"전체 삭제", clearQ:"확인하려면 전체 삭제를 한 번 더 누르세요.", copied:"표를 복사했습니다.", copyFail:"복사하지 못했습니다. 표를 선택해 직접 복사하세요.", csvDone:"CSV 파일을 만들었습니다.",
-  newB:"새 환자", backL:"← 돌아가기", saveHint:"저장되지 않음: 환자 이름이나 ID를 입력하면 이 결과가 환자 목록에 추가됩니다.", savedMsg:"환자 목록에 저장됨",
+  openB:"열기", delB:"삭제", selAll:"전체 선택", selN:n=>`${n}명 선택`, csvB:n=>`CSV 내려받기${n?` (${n})`:""}`, copyB:n=>`복사${n?` (${n})`:""}`, clearB:n=>`삭제${n?` (${n})`:""}`, clearQ:n=>`${n}명을 삭제하려면 삭제를 한 번 더 누르세요.`, delDone:n=>`${n}명을 삭제했습니다.`, copied:"표를 복사했습니다.", copyFail:"복사하지 못했습니다. 표를 선택해 직접 복사하세요.", csvDone:"CSV 파일을 만들었습니다.",
+  newB:"새 환자", backL:"돌아가기", saveHint:"저장되지 않음: 환자 이름이나 ID를 입력하면 이 결과가 환자 목록에 추가됩니다.", savedMsg:"환자 목록에 저장됨",
   c_bp:"비스포스포네이트 투여", c_po:"경구 비스포스포네이트", c_ext:"발치 이력",
   c_bmi:"BMI 범주", c_htn:"고혈압", c_ra:"류마티스 관절염", c_ste:"전신 글루코코르티코이드(스테로이드) 사용",
   c_deno:"데노수맙 투여", c_bd:"비스포스포네이트·데노수맙 모두 투여", c_mm:"골흡수억제제 총 투여 기간", c_imp:"임플란트 식립",
@@ -615,21 +635,32 @@ function relabel(){ applyStatic(); buildInputs(); if (state.view==="result") ren
 
 /* ---------- patient list ---------- */
 let prevView="start", clearArmed=false;
+const SEL=new Set();
+function syncSel(){
+  [...SEL].forEach(id=>{ if(!RECS.some(r=>r.id===id)) SEL.delete(id); });
+  const n=SEL.size, all=document.getElementById("sel-all");
+  all.checked = RECS.length>0 && n===RECS.length; all.indeterminate = n>0 && n<RECS.length;
+  document.getElementById("sel-n").textContent = n ? t("selN")(n) : "";
+  [["csv","csvB"],["copy","copyB"],["clear","clearB"]].forEach(([id,k])=>{ const b=document.getElementById(id); b.textContent=t(k)(n); b.disabled=!n; });
+  document.querySelectorAll("#ltab tr").forEach(tr=>{ const c=tr.querySelector("[data-sel]"); tr.classList.toggle("sel", !!c && c.checked); });
+  if (!n) clearArmed=false;
+}
 function fmtDate(iso){ try{ return new Date(iso).toLocaleDateString(LANG==="ko"?"ko-KR":"en-GB",{year:"numeric",month:"short",day:"numeric"}); }catch(e){ return String(iso).slice(0,10); } }
 function renderList(){
   const tb=document.getElementById("ltab"); tb.innerHTML="";
   document.getElementById("list-sum").textContent = t("listSum")(RECS.length);
   document.getElementById("list-empty").hidden = RECS.length>0;
   document.querySelector(".lwrap").hidden = RECS.length===0;
+  document.getElementById("lbar").hidden = RECS.length===0;
   RECS.forEach(r=>{
     const hi=r.p>=0.5, tr=document.createElement("tr");
-    tr.innerHTML=`<td>${esc(r.name)}</td><td data-l="${t("lh2")}">${r.age??"—"}</td><td data-l="${t("lh3")}">${r.sex==="F"?t("fem"):r.sex==="M"?t("mal"):"—"}</td>
+    tr.innerHTML=`<td class="ck"><input type="checkbox" data-sel="${r.id}" aria-label="${t("selAll")}: ${esc(r.name)}"${SEL.has(r.id)?" checked":""}></td><td>${esc(r.name)}</td><td data-l="${t("lh2")}">${r.age??"—"}</td><td data-l="${t("lh3")}">${r.sex==="F"?t("fem"):r.sex==="M"?t("mal"):"—"}</td>
       <td class="mono" data-l="${t("lh4")}">${r.p.toFixed(2)}</td><td data-l="${t("lh5")}"><span class="grp ${hi?"hi":"lo"}">${hi?t("hiG"):t("loG")}</span></td>
       <td data-l="${t("lh6")}">${r.n} / 7</td><td data-l="${t("lh7")}">${fmtDate(r.saved)}</td>
       <td class="act"><button type="button" data-open="${r.id}">${t("openB")}</button><button type="button" class="del" data-del="${r.id}">${t("delB")}</button></td>`;
     tb.appendChild(tr);
   });
-  updateCount();
+  syncSel(); updateCount();
 }
 function openRecord(id){
   const r=RECS.find(x=>x.id===id); if(!r) return;
@@ -640,10 +671,10 @@ function newPatient(){
   GENES.forEach(g=>state.geno[g.id]=null); state.clin=EMPTY_CLIN(); state.pt=EMPTY_PT(); state.example=false; state.recId=null;
   buildInputs(); show("input");
 }
-function tableRows(){
+function tableRows(recs){
   const head=["name_or_id","age","sex","score","group","variants_carried",...GENES.map(g=>g.gene+"_"+g.rs),"bisphosphonate","oral_bisphosphonate","tooth_extraction","bmi_category","hypertension","rheumatoid_arthritis","glucocorticoid","denosumab","bisphosphonate_and_denosumab","treatment_months","dental_implant","example","saved"];
   const yn=v=> v===1?"yes":v===0?"no":"";
-  const rows=RECS.map(r=>[r.name, r.age??"", r.sex??"", r.p.toFixed(3), r.p>=0.5?"higher-risk":"lower-risk", r.n,
+  const rows=recs.map(r=>[r.name, r.age??"", r.sex??"", r.p.toFixed(3), r.p>=0.5?"higher-risk":"lower-risk", r.n,
     ...GENES.map(g=> r.geno[g.id]===1?"carrier":r.geno[g.id]===0?"non-carrier":""),
     yn(r.clin.bp), yn(r.clin.po), yn(r.clin.ext), (r.clin.bmi===null||r.clin.bmi===undefined)?"":T.en.bmiL[r.clin.bmi],
     yn(r.clin.htn), yn(r.clin.ra), yn(r.clin.ste), yn(r.clin.deno), yn(r.clin.bd), r.clin.mm??"", yn(r.clin.imp), r.example?"yes":"no", r.saved]);
@@ -689,20 +720,32 @@ document.getElementById("new-pt2").addEventListener("click",newPatient);
 document.getElementById("ltab").addEventListener("click",e=>{
   const o=e.target.closest("[data-open]"), d=e.target.closest("[data-del]");
   if (o) openRecord(o.dataset.open);
-  if (d){ RECS=RECS.filter(x=>x.id!==d.dataset.del); if(state.recId===d.dataset.del) state.recId=null; saveRecs(RECS); renderList(); }
+  if (d){ RECS=RECS.filter(x=>x.id!==d.dataset.del); SEL.delete(d.dataset.del); if(state.recId===d.dataset.del) state.recId=null; saveRecs(RECS); renderList(); }
 });
+document.getElementById("ltab").addEventListener("change",e=>{
+  const c=e.target.closest("[data-sel]"); if(!c) return;
+  if (c.checked) SEL.add(c.dataset.sel); else SEL.delete(c.dataset.sel);
+  clearArmed=false; syncSel();
+});
+document.getElementById("sel-all").addEventListener("change",e=>{
+  SEL.clear(); if (e.target.checked) RECS.forEach(r=>SEL.add(r.id));
+  clearArmed=false; renderList();
+});
+const selRecs=()=>RECS.filter(r=>SEL.has(r.id));
 document.getElementById("csv").addEventListener("click",()=>{
-  const csv="﻿"+tableRows().map(r=>r.map(v=>{ const x=String(v); return /[",\n]/.test(x) ? '"'+x.replace(/"/g,'""')+'"' : x; }).join(",")).join("\n");
+  const csv="﻿"+tableRows(selRecs()).map(r=>r.map(v=>{ const x=String(v); return /[",\n]/.test(x) ? '"'+x.replace(/"/g,'""')+'"' : x; }).join(",")).join("\n");
   try{ const a=document.createElement("a"); a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"}));
     a.download="MARI_patients_"+new Date().toISOString().slice(0,10)+".csv"; document.body.appendChild(a); a.click(); a.remove(); listMsg(t("csvDone")); }catch(e){ listMsg(t("copyFail")); }
 });
 document.getElementById("copy").addEventListener("click",()=>{
-  const tsv=tableRows().map(r=>r.join("\t")).join("\n");
+  const tsv=tableRows(selRecs()).map(r=>r.join("\t")).join("\n");
   try{ navigator.clipboard.writeText(tsv).then(()=>listMsg(t("copied")),()=>listMsg(t("copyFail"))); }catch(e){ listMsg(t("copyFail")); }
 });
 document.getElementById("clear").addEventListener("click",()=>{
-  if(!clearArmed){ clearArmed=true; listMsg(t("clearQ")); setTimeout(()=>{clearArmed=false;},5000); return; }
-  clearArmed=false; RECS=[]; state.recId=null; saveRecs(RECS); renderList();
+  const n=SEL.size; if(!n) return;
+  if(!clearArmed){ clearArmed=true; listMsg(t("clearQ")(n)); setTimeout(()=>{clearArmed=false;},5000); return; }
+  clearArmed=false; if(SEL.has(state.recId)) state.recId=null;
+  RECS=RECS.filter(r=>!SEL.has(r.id)); SEL.clear(); saveRecs(RECS); renderList(); listMsg(t("delDone")(n));
 });
 document.querySelectorAll(".lang button").forEach(b=>b.addEventListener("click",()=>{
   LANG=b.dataset.l; try{ localStorage.setItem("mronj-lang", LANG); }catch(e){} relabel(); }));
