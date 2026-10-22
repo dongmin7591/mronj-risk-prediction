@@ -1,0 +1,575 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MRONJ-MARI</title>
+<style>
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0} img{max-width:100%} [hidden]{display:none!important}
+</style>
+
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Noto+Sans+KR:wght@400;500;700&display=swap">
+<style>
+/* Layout: two-pane clinical calculator — inputs on the left, a sticky result panel on the right; stacks on phones. */
+:root{ color-scheme:light;
+  /* single light theme by design — the page keeps this look in every viewer theme */
+  --bg:#F8FAFC; --surface:#FFFFFF; --ink:#22303E; --muted:#66727F; --line:#E3E8EE; --line2:#EEF2F6;
+  --accent:#3E63B8; --accent-soft:#EBF1FC; --gene:#4F74C9;
+  --warn:#8A6A2A; --warn-soft:#FBF7EE; --warn-line:#EEE3CB;
+  --rtl:50%; --rbl:70%; --tick:#22303E;
+  --f-ui:"Instrument Sans", "Noto Sans KR", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-data:"JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-ui);font-size:15px;line-height:1.5;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 48px}
+.wrap{max-width:1120px;margin:0 auto;display:flex;flex-direction:column;gap:22px}
+header{display:flex;flex-direction:column;gap:6px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.lang{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--surface)}
+.lang button{font:inherit;font-size:12.5px;border:0;padding:5px 11px;background:transparent;color:var(--muted);cursor:pointer}
+.lang button+button{border-left:1px solid var(--line)}
+.lang button[aria-pressed="true"]{background:var(--accent-soft);color:var(--accent);font-weight:700}
+.lang button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.eyebrow{font-size:12.5px;letter-spacing:.04em;color:var(--muted);font-weight:600}
+h1{font-size:clamp(24px,3.2vw,32px);line-height:1.15;margin:0;text-wrap:balance;font-weight:700}
+.lede{color:var(--muted);max-width:68ch;margin:0}
+.banner{display:flex;gap:10px;align-items:flex-start;background:var(--warn-soft);color:var(--ink);border:1px solid var(--warn-line);
+  border-radius:10px;padding:10px 14px;font-size:13.5px}
+.banner b{color:var(--warn)}
+.grid{display:grid;grid-template-columns:minmax(0,1fr);gap:22px;max-width:760px;width:100%;margin:0 auto}
+@media (max-width:860px){.grid{grid-template-columns:1fr}}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 18px 20px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.panel h2{font-size:15px;margin:0;font-weight:700;display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap}
+.panel h2 small{font-weight:500;color:var(--muted);font-size:12.5px}
+.models{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;background:var(--bg);padding:4px;border-radius:10px;border:1px solid var(--line)}
+.models button{font:inherit;font-size:13.5px;font-weight:600;border:0;border-radius:7px;padding:8px 6px;background:transparent;color:var(--muted);cursor:pointer}
+.models button[aria-pressed="true"]{background:var(--surface);color:var(--accent);box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.models button:focus-visible,.seg button:focus-visible,.chip:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.rows{display:flex;flex-direction:column}
+.row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center;padding:9px 0;border-top:1px solid var(--line2)}
+.row:first-child{border-top:0}
+.row .lab{min-width:0;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.info{position:relative;display:inline-flex}
+.titlerow{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.ib-lg{width:22px;height:22px;font-size:13px}
+.tt-wide{width:min(440px,86vw)}
+.ib{font:600 11px/1 var(--f-ui);width:17px;height:17px;border-radius:50%;border:1px solid var(--line);background:var(--accent-soft);color:var(--accent);cursor:help;padding:0;display:inline-grid;place-items:center}
+.ib:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.tt{position:absolute;left:-6px;top:calc(100% + 8px);z-index:20;width:min(320px,78vw);background:var(--ink);color:var(--surface);font-size:12.5px;font-weight:400;line-height:1.45;padding:9px 11px;border-radius:8px;box-shadow:0 6px 18px rgba(20,30,45,.18);opacity:0;visibility:hidden;transform:translateY(-2px);transition:opacity .12s ease,transform .12s ease;pointer-events:none}
+.tt::before{content:"";position:absolute;left:11px;top:-5px;border:5px solid transparent;border-top:0;border-bottom-color:var(--ink)}
+.info:hover .tt,.ib:focus + .tt{opacity:1;visibility:visible;transform:none}
+@media (prefers-reduced-motion:reduce){.tt{transition:none}}
+/* hidden tooltips must not widen the page */
+.tt{display:none}
+.info:hover .tt,.ib:focus + .tt{display:block}
+/* phones: tooltip becomes a bottom sheet inside the screen */
+@media (max-width:640px){
+  .tt,.tt-wide{position:fixed;left:max(16px,env(safe-area-inset-left,0px));right:max(16px,env(safe-area-inset-right,0px));
+    top:auto;bottom:calc(16px + env(safe-area-inset-bottom,0px));width:auto;font-size:13.5px;padding:12px 14px;z-index:50}
+  .tt::before{display:none}
+  .ib{width:22px;height:22px;font-size:12.5px}
+}
+.tablewrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+@media (max-width:640px){
+  body{font-size:14.5px}
+  .panel{padding:14px 14px 16px}
+  .row{gap:8px}
+  .seg button{padding:7px 10px;min-width:0}
+  .score .num{font-size:38px}
+  table{font-size:12px} th,td{padding:6px 4px}
+  .result .vlist{grid-template-columns:1fr 1fr;gap:8px}
+  .result .vlist li{padding:9px 10px}
+  .result .vlist .vh{flex-direction:column;align-items:flex-start;gap:5px}
+  .result .vlist .wl{font-size:11px}
+  .vlist .g{font-size:14.5px}
+  .vlist .st{font-size:11px;padding:2px 7px}
+  .stack .seg7{font-size:10.5px}
+  .primary{width:100%}
+  .actions{justify-content:stretch}
+}
+@media (max-width:360px){ .result .vlist{grid-template-columns:1fr} }
+.row .name{font-weight:600}
+.row .name i{font-style:italic}
+.row .meta{font-family:var(--f-data);font-size:12px;color:var(--muted)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg button{font:inherit;font-size:13px;border:0;padding:6px 12px;background:var(--surface);color:var(--muted);cursor:pointer;min-width:52px}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button[aria-pressed="true"]{background:var(--accent-soft);color:var(--accent);font-weight:700}
+.row.gene .seg button[aria-pressed="true"]{background:color-mix(in srgb,var(--gene) 13%,var(--surface));color:var(--gene)}
+.row.off{opacity:.45}
+.actions{display:flex;justify-content:flex-end;padding-top:6px;border-top:1px solid var(--line)}
+.primary{font:inherit;font-size:15px;font-weight:600;border:0;border-radius:10px;padding:12px 22px;background:var(--accent);color:var(--surface);cursor:pointer;min-width:12em}
+.primary:hover{filter:brightness(1.08)}
+.primary:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.calc{align-items:center;text-align:center;padding-block:40px 36px;gap:10px;position:relative}
+.ring{width:132px;height:132px;transform:rotate(-90deg)}
+.ring-bg{fill:none;stroke:var(--line2);stroke-width:8}
+.ring-fg{fill:none;stroke:var(--accent);stroke-width:8;stroke-linecap:round;stroke-dasharray:326.73;stroke-dashoffset:326.73}
+.pct{position:absolute;top:84px;left:0;right:0;font-family:var(--f-data);font-size:26px;font-variant-numeric:tabular-nums;color:var(--ink)}
+.ctitle{font-weight:700;font-size:16px;margin-top:6px}
+.cstep{color:var(--muted);font-size:13.5px;min-height:1.5em}
+.cbarline{width:min(320px,80%);height:4px;border-radius:2px;background:var(--line2);overflow:hidden}
+.cbarline span{display:block;height:100%;width:0;background:var(--accent)}
+.start{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:36px;min-height:min(62vh,560px);padding-block:24px}
+.sttitle{margin:0;font-size:clamp(30px,5.2vw,52px);line-height:1.1;font-weight:700;letter-spacing:-.01em;text-wrap:balance;color:var(--ink)}
+.stwrap{display:flex;flex-direction:column;gap:10px;align-items:center}
+.stsub{margin:0;color:var(--muted);font-size:clamp(15px,2vw,19px);letter-spacing:.02em}
+.primary.big{font-size:20px;padding:18px 56px;border-radius:14px;min-width:min(280px,80vw);box-shadow:0 6px 18px rgba(62,99,184,.22)}
+.wrap[data-view="start"] .titlerow,.wrap[data-view="start"] .foot{display:none}
+.rhead{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.muted{color:var(--muted);font-size:12.5px}
+.back::before{content:"← "}
+#h-out{font-size:18px}
+#h-out:focus{outline:none}
+.inp{font:inherit;font-size:13px;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:6px 8px;max-width:100%}
+.inp:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+input.inp{width:5.5em;font-family:var(--f-data);text-align:right}
+.numw{display:inline-flex;align-items:center;gap:6px}
+.tools{display:flex;gap:8px;flex-wrap:wrap}
+.chip{font:inherit;font-size:12.5px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:5px 11px;cursor:pointer}
+details{border-top:1px solid var(--line);padding-top:10px;font-size:13px;color:var(--muted)}
+summary{cursor:pointer;color:var(--ink);font-weight:600}
+.result{position:static}
+@media (max-width:860px){.result{position:static}}
+.result{--rh:80;--rc:.03;--a:.1}
+.verdict{border-radius:10px;padding:14px 16px;display:flex;flex-direction:column;gap:4px;
+  background:oklch(var(--rbl) var(--rc) var(--rh) / var(--a));border:1px solid oklch(var(--rbl) var(--rc) var(--rh) / calc(var(--a) + .18));transition:background .25s ease,border-color .25s ease}
+.verdict .tag{font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:oklch(var(--rtl) var(--rc) var(--rh))}
+.verdict .margin{font-size:13px;color:var(--muted)}
+.score{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.score .num{color:oklch(var(--rtl) var(--rc) var(--rh));font-family:var(--f-data);font-size:44px;font-weight:500;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.score .unit{color:var(--muted);font-size:13px}
+.gauge{position:relative;height:38px;margin-top:4px}
+.gauge .track{position:absolute;left:0;right:0;top:13px;height:8px;border-radius:4px;
+  background:linear-gradient(90deg in oklch,oklch(var(--rbl) .09 200 / .55),oklch(var(--rbl) .03 80 / .45) 50%,oklch(var(--rbl) .14 15 / .7))}
+.gauge .cut{position:absolute;left:50%;top:7px;width:1.5px;height:20px;background:var(--tick);opacity:.5}
+.gauge .dot{position:absolute;top:8px;width:18px;height:18px;margin-left:-9px;border-radius:50%;background:oklch(var(--rtl) var(--rc) var(--rh));border:3px solid var(--surface);box-shadow:0 0 0 1px oklch(var(--rtl) var(--rc) var(--rh)),0 1px 3px rgba(0,0,0,.18);transition:left .25s ease,background .25s ease}
+@media (prefers-reduced-motion:reduce){.gauge .dot,.verdict{transition:none}}
+.gauge .ticks{position:absolute;left:0;right:0;top:26px;display:flex;justify-content:space-between;font-family:var(--f-data);font-size:11px;color:var(--muted)}
+.kv{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.kv div{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 10px;min-width:0}
+.kv span{display:block;font-size:11.5px;color:var(--muted)}
+.kv b{font-family:var(--f-data);font-weight:500;font-size:15px;font-variant-numeric:tabular-nums}
+.contrib{display:flex;flex-direction:column;gap:6px}
+.cbar{display:grid;grid-template-columns:minmax(0,9.5em) minmax(0,1fr) 4.2em;gap:8px;align-items:center;font-size:12.5px}
+.cbar .axis{position:relative;height:12px;background:var(--bg);border-radius:3px}
+.cbar .axis::before{content:"";position:absolute;left:50%;top:-2px;bottom:-2px;width:1px;background:var(--line)}
+.cbar .fill{position:absolute;top:0;height:100%;border-radius:3px}
+.cbar .v{font-family:var(--f-data);text-align:right;font-variant-numeric:tabular-nums;color:var(--muted)}
+.stack{position:relative;display:flex;height:36px;border-radius:8px;background:var(--line2);margin-top:26px}
+.stack .seg7{height:100%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;overflow:hidden;white-space:nowrap;box-shadow:inset -2px 0 0 var(--surface)}
+.stack .seg7:first-child{border-radius:8px 0 0 8px}
+.stack .seg7:last-of-type{border-radius:0 8px 8px 0}
+.stack .seg7.off{background:repeating-linear-gradient(135deg,var(--line2) 0 6px,var(--surface) 6px 10px)!important;color:#9AA5B1;font-weight:600}
+.stack .avg{position:absolute;top:-22px;bottom:-6px;width:0;border-left:2px dashed var(--ink);opacity:.7}
+.stack .avg span{position:absolute;top:-1px;left:5px;font-size:12px;font-weight:600;color:var(--ink);white-space:nowrap}
+.stackax{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-top:-4px}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12.5px;color:var(--muted)}
+.legend i{display:inline-block;width:14px;height:14px;border-radius:3px;vertical-align:-2px;margin-right:6px}
+.legend .k1{background:var(--accent)}
+.legend .k2{background:repeating-linear-gradient(135deg,var(--line2) 0 4px,var(--surface) 4px 7px);border:1px solid var(--line)}
+.vlist{list-style:none;margin:4px 0 0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px}
+.vlist li{border:1px solid var(--line);border-radius:10px;padding:11px 12px;display:flex;flex-direction:column;gap:7px;min-width:0;background:var(--surface)}
+.vlist li.on{border-color:color-mix(in srgb,var(--accent) 40%,var(--line));background:var(--accent-soft)}
+.vlist .vh{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.vlist .g{font-weight:700;font-style:italic;font-size:16px;color:var(--ink)}
+.vlist .st{font-size:12px;font-weight:600;padding:3px 9px;border-radius:999px;border:1px solid var(--line);color:var(--muted);background:var(--surface);white-space:nowrap}
+.vlist li.on .st{background:var(--accent);border-color:var(--accent);color:#fff}
+.vlist .wrow{display:flex;align-items:center;gap:8px}
+.vlist .wbar{flex:1;height:6px;border-radius:3px;background:var(--line2);overflow:hidden}
+.vlist .wbar span{display:block;height:100%;background:#B7C2CE}
+.vlist li.on .wbar span{background:var(--accent)}
+.vlist .wl{font-size:12px;color:var(--muted);white-space:nowrap}
+.vlist .rs{font-family:var(--f-data);font-size:11.5px;color:var(--muted)}
+.settings{display:flex;flex-direction:column;gap:8px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{padding:7px 6px;border-top:1px solid var(--line);text-align:right;font-variant-numeric:tabular-nums}
+th:first-child,td:first-child{text-align:left}
+th{font-size:11.5px;color:var(--muted);font-weight:600;letter-spacing:.03em}
+td.mono{font-family:var(--f-data)}
+.note{font-size:12.5px;color:var(--muted);margin:0}
+.foot{font-size:12.5px;color:var(--muted);display:flex;flex-direction:column;gap:6px;max-width:90ch}
+.foot b{color:var(--ink)}
+.foot{border-top:1px solid var(--line);padding-top:14px;max-width:760px;width:100%;margin:0 auto}
+.foot p{margin:0}
+code{font-family:var(--f-data);font-size:12px}
+</style>
+</head>
+<body>
+
+
+<div class="wrap" data-view="start">
+  <header>
+    <div class="top"><div class="eyebrow" data-i18n="eyebrow"></div><div class="lang" role="group" aria-label="Language"><button id="l-en" type="button" data-l="en">EN</button><button id="l-ko" type="button" data-l="ko">한국어</button></div></div>
+    <div class="titlerow"><h1 data-i18n="h1"></h1><span class="info"><button type="button" class="ib ib-lg" id="about-tip" aria-describedby="about-tt" aria-label="About this calculator">i</button><span class="tt tt-wide" role="tooltip" id="about-tt"><span data-i18n="lede"></span> <span data-i18n="banT"></span></span></span></div>
+    
+  </header>
+
+  <div class="grid">
+    <section class="start" id="panel-start" aria-labelledby="h-start">
+      <div class="stwrap"><h2 id="h-start" class="sttitle" data-i18n="h1"></h2><p class="stsub" data-i18n="sub"></p></div>
+      <button class="primary big" id="start" type="button" data-i18n="stB"></button>
+    </section>
+
+    <section class="panel" id="panel-in" aria-labelledby="h-in" hidden>
+
+      <h2 id="h-in"><span data-i18n="gp"></span> <small data-i18n="gps"></small></h2>
+      <div class="tools">
+        <button class="chip" id="all-car" type="button" data-i18n="allc"></button>
+        <button class="chip" id="all-non" type="button" data-i18n="alln"></button>
+      </div>
+      <div class="rows" id="genes"></div>
+
+      <h2><span data-i18n="ci"></span></h2>
+      <p class="note" data-i18n="cz"></p>
+      <div class="rows" id="clin"></div>
+      <div class="actions"><button class="primary" id="go" type="button" data-i18n="go"></button></div>
+    </section>
+
+    <section class="panel calc" id="panel-calc" aria-live="polite" hidden>
+      <svg class="ring" viewBox="0 0 120 120" aria-hidden="true">
+        <circle cx="60" cy="60" r="52" class="ring-bg"></circle>
+        <circle cx="60" cy="60" r="52" class="ring-fg" id="ring-fg"></circle>
+      </svg>
+      <div class="pct" id="pct">0%</div>
+      <div class="ctitle" data-i18n="calcT"></div>
+      <div class="cstep" id="cstep"></div>
+      <div class="cbarline"><span id="cfill"></span></div>
+    </section>
+
+    <section class="panel result" id="panel-out" aria-labelledby="h-out" hidden>
+      <div class="rhead"><button class="chip back" id="back" type="button" data-i18n="back"></button><small class="muted" id="mname" hidden></small></div>
+      <h2 id="h-out" tabindex="-1"><span data-i18n="res"></span></h2>
+      <div class="verdict" id="verdict">
+        <span class="tag" id="vtag">Above cutoff</span>
+        <div class="score"><span class="num" id="pnum">0.00</span><span class="unit" data-i18n="unit"></span></div>
+        <span class="margin" id="pmargin"></span>
+      </div>
+      <div class="gauge" aria-hidden="true">
+        <div class="track"></div><div class="cut"></div><div class="dot" id="dot"></div>
+        <div class="ticks"><span>0</span><span data-i18n="tick"></span><span>1</span></div>
+      </div>
+      <div class="kv">
+        <div><span data-i18n="kc"></span><b id="kcount">0 / 7</b></div>
+        <div><span data-i18n="kp"></span><b id="kprs">0.00</b></div>
+        <div><span data-i18n="kz"></span><b id="kz">0.00 SD</b></div>
+      </div>
+
+      <h2><span data-i18n="gpT"></span> <small id="gpsum"></small></h2>
+      <div class="stack" id="stack" aria-hidden="true"><div class="avg" id="avg"><span data-i18n="avgL"></span></div></div>
+      <div class="stackax"><span>0</span><span data-i18n="maxL"></span></div>
+      <div class="legend"><span><i class="k1"></i><span data-i18n="lg1"></span></span><span><i class="k2"></i><span data-i18n="lg2"></span></span></div>
+      <ul class="vlist" id="vlist"></ul>
+      <p class="note" id="clinnote" data-i18n="cnote"></p>
+
+      <h2><span data-i18n="pp"></span> <small data-i18n="pps"></small></h2>
+      <div class="settings">
+        <div class="tablewrap"><table>
+          <thead><tr><th data-i18n="th1"></th><th data-i18n="th2"></th><th data-i18n="th3"></th><th>NPV</th><th>PPV</th></tr></thead>
+          <tbody id="ptab"></tbody>
+        </table></div>
+        <p class="note" id="sesp"></p>
+      </div>
+    </section>
+  </div>
+
+  <footer class="foot">
+    <p data-i18n-html="f1"></p>
+    <p data-i18n-html="f2"></p>
+  </footer>
+</div>
+
+<script>
+
+const T = {
+ en:{eyebrow:"Beta version v0.9", h1:"MRONJ-MARI", sub:"MRONJ Assessment of Risk with Inherited variants",
+  lede:"Enter carrier status for the seven panel variants and the 11 clinical items, then select View result. The calculator applies the model developed in the study, with a fixed cutoff of 0.50.",
+  banB:"Not for clinical decisions.", banT:"The score shows whether a patient falls above or below the 0.50 cutoff. It is not the probability of developing MRONJ.",
+  model:"Model", b_int:"Integrated", b_prs:"PRS only", b_clin:"Clinical only",
+  gp:"Germline panel", gps:"carrier = at least one copy of the variant", allc:"Mark all carrier", alln:"Mark all non-carrier",
+  car:"Carrier", non:"Non-carrier", ci:"Clinical items", cis:"yes = present", yes:"Yes", no:"No", lo:"log odds",
+  c_bp:"Bisphosphonate therapy", c_po:"Oral bisphosphonate", c_ext:"History of tooth extraction",
+  c_bmi:"BMI category", c_htn:"Hypertension", c_ra:"Rheumatoid arthritis", c_ste:"Systemic glucocorticoid use", c_deno:"Denosumab therapy", c_bd:"Both bisphosphonate and denosumab", c_mm:"Total antiresorptive treatment duration", c_imp:"Dental implant placement", months:"months",
+  tips:{bmi:"Body mass index (kg/m²), Korean Society for the Study of Obesity criteria: underweight <18.5; normal weight 18.5–22.9; overweight 23.0–24.9; mild obesity 25.0–29.9; moderate obesity ≥30.0.",
+    ste:"Current or previous systemic (oral or intravenous) glucocorticoid treatment.",
+    bp:"Any intravenous (pamidronate, zoledronate) or oral (alendronate, risedronate, ibandronate) bisphosphonate.",
+    deno:"Subcutaneous denosumab.",
+    bd:"Exposure to both a bisphosphonate and denosumab during treatment.",
+    po:"The implicated antiresorptive was taken orally (alendronate, risedronate or ibandronate) rather than by intravenous or subcutaneous injection.",
+    mm:"Months of antiresorptive treatment, summed across agents when more than one was used.",
+    ext:"Tooth extraction performed while receiving or after antiresorptive treatment.",
+    imp:"Dental implant placed while receiving or after antiresorptive treatment."},
+  bmiL:["Underweight","Normal weight","Overweight","Mild obesity","Moderate obesity"],
+  cz:"Only bisphosphonate therapy, oral bisphosphonate and history of tooth extraction change the score; the other eight items did not contribute to the final model. Hover over or tap ⓘ for definitions.",
+  dsum:"Eight further clinical variables",
+  dtxt:"BMI category, hypertension, rheumatoid arthritis, systemic steroid use, denosumab use, combined bisphosphonate and denosumab use, cumulative medication exposure and dental implant placement were entered into both clinical models. Their penalized coefficients were shrunk to zero, so they do not change the score and are not asked here.",
+  stT:"Estimate germline-informed MRONJ risk", stL:"This calculator combines seven germline variants with routine clinical information and places a patient above or below the risk cutoff established in the study.", st1k:"7", st1:"germline variants (carrier or non-carrier)", st2k:"11", st2:"clinical items from the medical record", st3k:"~1 min", st3:"to complete", stB:"Start",
+  res:"Result", calcT:"Calculating…", steps:["Reading genotype profile","Computing genetic score","Adding clinical items","Classifying against the 0.50 cutoff","Done"], go:"View result", back:"Edit inputs", n_int:"Clinical + genetic", n_prs:"PRS-only model", n_clin:"Clinical-only model",
+  vpos:"Above cutoff · higher-risk group", vneg:"Below cutoff · lower-risk group",
+  mAbove:d=>`${d} above the 0.50 cutoff`, mBelow:d=>`${d} below the 0.50 cutoff`,
+  unit:"model score (0–1)", tick:"0.50 cutoff", kc:"Variants carried", kp:"Genetic score", kz:"Compared with study average",
+  gpT:"Germline variant profile", gpSum:(n,p)=>`${n} of 7 variants · ${p}% of maximum genetic score`, avgL:"Study average", maxL:"All 7 carried", rank:i=>`Weight #${i}`, lg1:"Carried", lg2:"Not carried",
+  wm:"What moves the score", wms:"", p_b0:"Baseline", p_z:"Genetic score", tot:"Total",
+  cnote:"Tooth extraction and bisphosphonate therapy lower the score because, in this study, every patient without MRONJ had undergone tooth extraction and more of them had received bisphosphonates. This does not mean that these factors protect against MRONJ.",
+  pp:"Projected performance by setting", pps:"at the 0.50 cutoff",
+  th1:"Assumed incidence", th2:"Screen-positive / 1,000", th3:"Missed cases / 1,000",
+  s1:"0.1% · osteoporosis", s2:"1%", s3:"5% · high-dose oncology",
+  sesp:(n,se,sp)=>`In the study, the model identified ${se}% of patients with MRONJ (sensitivity) and ${sp}% of patients without MRONJ (specificity) at the 0.50 cutoff. These figures do not change with the profile entered above.`,
+  f1:"<b>Caution.</b> This calculator is a beta version for research use only and is not a medical device. It has not been approved by any regulatory authority and has been evaluated only in small Korean study cohorts. The score is a classification score relative to the 0.50 cutoff, not an absolute probability of developing MRONJ. Do not use it to start, stop or delay antiresorptive therapy or necessary dental treatment; follow current clinical guidelines and the judgement of the treating clinician.",
+  f2:"<b>Copyright.</b> © 2026 Dong Min Lim, Hyun Hwang, Jin Woo Kim, Yun Hak Kim and co-authors. All rights reserved. No part of this calculator, including its model, coefficients, source code and content, may be reproduced, distributed, modified, transmitted, publicly displayed or used for commercial purposes, in whole or in part, without the prior written permission of the copyright holders. Unauthorized use or distribution is strictly prohibited and may result in legal action under applicable copyright law."},
+ ko:{eyebrow:"베타 버전 v0.9", h1:"MRONJ-MARI", sub:"유전 변이 기반 MRONJ 위험 평가 (MRONJ Assessment of Risk with Inherited variants)",
+  lede:"7개 패널 변이의 보인자 여부와 임상 항목 11개를 입력한 뒤 결과 보기를 누르세요. 연구에서 개발한 모델을 절단값 0.50으로 그대로 적용합니다.",
+  banB:"임상 결정에 사용하지 마세요.", banT:"점수는 환자가 절단값 0.50보다 높은지 낮은지를 보여줍니다. MRONJ가 발생할 확률이 아닙니다.",
+  model:"모델", b_int:"통합", b_prs:"PRS 단독", b_clin:"임상 단독",
+  gp:"유전체 패널", gps:"보인자 = 해당 변이를 1개 이상 보유", allc:"모두 보인자", alln:"모두 비보인자",
+  car:"보인자", non:"비보인자", ci:"임상 항목", cis:"예 = 해당", yes:"예", no:"아니오", lo:"로그 오즈",
+  c_bp:"비스포스포네이트 투여", c_po:"경구 비스포스포네이트", c_ext:"발치 이력",
+  c_bmi:"BMI 범주", c_htn:"고혈압", c_ra:"류마티스 관절염", c_ste:"전신 글루코코르티코이드(스테로이드) 사용", c_deno:"데노수맙 투여", c_bd:"비스포스포네이트·데노수맙 모두 투여", c_mm:"골흡수억제제 총 투여 기간", c_imp:"임플란트 식립", months:"개월",
+  tips:{bmi:"체질량지수(kg/m²), 대한비만학회 기준: 저체중 <18.5, 정상 체중 18.5–22.9, 과체중 23.0–24.9, 경도 비만 25.0–29.9, 중등도 비만 ≥30.0.",
+    ste:"현재 또는 과거의 전신(경구·정맥) 글루코코르티코이드 치료.",
+    bp:"정맥(파미드로네이트, 졸레드로네이트) 또는 경구(알렌드로네이트, 리세드로네이트, 이반드로네이트) 비스포스포네이트 투여.",
+    deno:"피하주사 데노수맙 투여.",
+    bd:"치료 과정에서 비스포스포네이트와 데노수맙을 모두 투여받은 경우.",
+    po:"원인 골흡수억제제를 주사가 아닌 경구(알렌드로네이트, 리세드로네이트, 이반드로네이트)로 복용한 경우.",
+    mm:"골흡수억제제 투여 개월 수. 두 가지 이상 사용했다면 합산합니다.",
+    ext:"골흡수억제제 투여 중 또는 투여 이후 시행한 발치.",
+    imp:"골흡수억제제 투여 중 또는 투여 이후 식립한 임플란트."},
+  bmiL:["저체중","정상 체중","과체중","경도 비만","중등도 비만"],
+  cz:"점수에 영향을 주는 항목은 비스포스포네이트 투여, 경구 비스포스포네이트, 발치 이력뿐이며, 나머지 8개 항목은 최종 모델에 반영되지 않았습니다. ⓘ에 마우스를 올리거나 누르면 정의가 보입니다.",
+  dsum:"그 밖의 임상 변수 8개",
+  dtxt:"BMI 범주, 고혈압, 류마티스 관절염, 전신 스테로이드 사용, 데노수맙 사용, 비스포스포네이트·데노수맙 병용, 누적 투여 기간, 임플란트 식립은 두 임상 모델에 모두 투입했습니다. 벌점화된 계수가 0으로 줄어 점수에 영향을 주지 않으므로 여기서는 입력받지 않습니다.",
+  stT:"유전 정보 기반 MRONJ 위험 평가", stL:"7개 유전 변이와 일상 진료에서 얻는 임상 정보를 함께 사용해, 환자가 연구에서 정한 위험 절단값보다 높은지 낮은지를 보여줍니다.", st1k:"7", st1:"유전 변이 (보인자 여부)", st2k:"11", st2:"의무기록의 임상 항목", st3k:"약 1분", st3:"소요 시간", stB:"시작",
+  res:"결과", calcT:"계산 중…", steps:["유전형 정보 읽는 중","유전 점수 계산 중","임상 항목 반영 중","절단값 0.50 기준 분류 중","완료"], go:"결과 보기", back:"입력 수정", n_int:"임상 + 유전", n_prs:"PRS 단독 모델", n_clin:"임상 단독 모델",
+  vpos:"절단값 이상 · 고위험군", vneg:"절단값 미만 · 저위험군",
+  mAbove:d=>`절단값 0.50보다 ${d} 높음`, mBelow:d=>`절단값 0.50보다 ${d} 낮음`,
+  unit:"모델 점수 (0–1)", tick:"절단값 0.50", kc:"보유 변이 수", kp:"유전 점수", kz:"연구 평균 대비",
+  gpT:"유전 변이 프로필", gpSum:(n,p)=>`7개 중 ${n}개 보유 · 최대 유전 점수의 ${p}%`, avgL:"연구 평균", maxL:"7개 모두 보유", rank:i=>`가중치 ${i}위`, lg1:"보유", lg2:"미보유",
+  wm:"점수에 기여하는 항목", wms:"", p_b0:"기본값", p_z:"유전 점수", tot:"합계",
+  cnote:"발치와 비스포스포네이트 투여가 점수를 낮추는 것은, 이 연구에서 MRONJ가 생기지 않은 환자가 모두 발치를 받았고 비스포스포네이트 투여 비율도 더 높았기 때문입니다. 이 요인들이 MRONJ를 예방한다는 뜻은 아닙니다.",
+  pp:"환경별 예상 성능", pps:"절단값 0.50 기준",
+  th1:"가정 발생률", th2:"1,000명당 양성", th3:"1,000명당 놓친 환자",
+  s1:"0.1% · 골다공증", s2:"1%", s3:"5% · 고용량 종양 치료",
+  sesp:(n,se,sp)=>`연구에서 이 모델은 절단값 0.50 기준으로 MRONJ 환자의 ${se}%(민감도), MRONJ가 없는 환자의 ${sp}%(특이도)를 바르게 분류했습니다. 이 값은 위에 입력한 내용과 관계없이 일정합니다.`,
+  f1:"<b>주의.</b> 이 계산기는 연구용 베타 버전이며 의료기기가 아닙니다. 어떤 규제기관의 허가도 받지 않았고, 소규모 한국인 연구 코호트에서만 평가되었습니다. 점수는 절단값 0.50을 기준으로 한 분류 점수이며 MRONJ가 발생할 절대 확률이 아닙니다. 골흡수억제제 치료나 필요한 치과 치료를 시작·중단·연기하는 근거로 사용하지 마시고, 최신 진료지침과 담당 의료진의 판단을 따르십시오.",
+  f2:"<b>저작권 안내.</b> © 2026 임동민, 황현, 김진우, 김윤학 외 공동저자. All rights reserved. 본 계산기의 모델, 계수, 소스 코드 및 콘텐츠를 포함한 모든 저작물의 저작권은 저작권자에게 있습니다. 저작권자의 사전 서면 동의 없이 전부 또는 일부를 무단으로 복제, 배포, 수정, 전송, 게시하거나 상업적으로 이용하는 행위를 금지하며, 이를 위반할 경우 저작권법 등 관련 법령에 따라 민·형사상 책임을 질 수 있습니다."}
+};
+let LANG = "en";
+try { const v = localStorage.getItem("mronj-lang"); if (v==="ko"||v==="en") LANG=v; } catch(e){}
+const t = k => T[LANG][k];
+function applyStatic(){
+  document.documentElement.lang = LANG;
+  document.querySelectorAll("[data-i18n]").forEach(el=>{ el.textContent = t(el.dataset.i18n); });
+  document.querySelectorAll("[data-i18n-html]").forEach(el=>{ el.innerHTML = t(el.dataset.i18nHtml); });
+  document.querySelectorAll(".lang button").forEach(b=>b.setAttribute("aria-pressed", String(b.dataset.l===LANG)));
+}
+
+const MU = 5.83164755271135, SD = 2.202154830477;
+const GENES = [
+  {id:"g-mylk",  c:"#3E63B8", gene:"MYLK",    rs:"rs3732487",  w:1.75770098899728},
+  {id:"g-zks",   c:"#2D4E9A", gene:"ZKSCAN2", rs:"rs2112811",  w:2.22100811766702},
+  {id:"g-crnn",  c:"#7A9BD9", gene:"CRNN",    rs:"rs3829868",  w:0.585890364053},
+  {id:"g-c6",    c:"#5C86C9", gene:"C6",      rs:"rs1801033",  w:1.02934247517629},
+  {id:"g-rpap1", c:"#3A72A8", gene:"RPAP1",   rs:"rs1200345",  w:1.71835556930564},
+  {id:"g-mmrn1", c:"#4F8FB0", gene:"MMRN1",   rs:"rs12646270", w:1.28527224798385},
+  {id:"g-cfap",  c:"#6A7FC4", gene:"CFAP77",  rs:"rs7047726",  w:1.27276403890651}
+];
+const CLIN = [
+  {id:"c-bmi",  nk:"c_bmi",  key:"bmi",  type:"bmi"},
+  {id:"c-htn",  nk:"c_htn",  key:"htn",  type:"bin"},
+  {id:"c-ra",   nk:"c_ra",   key:"ra",   type:"bin"},
+  {id:"c-ste",  nk:"c_ste",  key:"ste",  type:"bin"},
+  {id:"c-bp",   nk:"c_bp",   key:"bp",   type:"bin"},
+  {id:"c-deno", nk:"c_deno", key:"deno", type:"bin"},
+  {id:"c-bd",   nk:"c_bd",   key:"bd",   type:"bin"},
+  {id:"c-po",   nk:"c_po",   key:"po",   type:"bin"},
+  {id:"c-mm",   nk:"c_mm",   key:"mm",   type:"num"},
+  {id:"c-ext",  nk:"c_ext",  key:"ext",  type:"bin"},
+  {id:"c-imp",  nk:"c_imp",  key:"imp",  type:"bin"}
+];
+const MODELS = {
+  int:  {nk:"n_int",   b0:2.009, prs:0.947751371668514, bp:-0.654, po:-0.063, ext:-1.355, se:14/16, sp:4/5, uses:{prs:1,clin:1}},
+  prs:  {nk:"n_prs",     b0:1.385, prs:3.42112396123485,  bp:0,      po:0,      ext:0,      se:14/16, sp:4/5, uses:{prs:1,clin:0}},
+  clin: {nk:"n_clin",b0:2.849, prs:0,                 bp:-1.231, po:-0.379, ext:-2.178, se:10/16, sp:3/5, uses:{prs:0,clin:1}}
+};
+const SETTINGS = [
+  {lk:"s1", f:0.001},
+  {lk:"s2", f:0.01},
+  {lk:"s3", f:0.05}
+];
+
+/* Pure scoring function — the same arithmetic as predict() on the caret fits. */
+function score(modelKey, geno, clin){
+  const m = MODELS[modelKey];
+  const prs = GENES.reduce((s,g)=> s + (geno[g.id]?g.w:0), 0);
+  const z = (prs - MU)/SD;
+  const parts = [
+    {lk:"p_b0", v:m.b0, kind:"base"},
+    {lk:"p_z", v:m.prs*z, kind:"gene"},
+    {lk:"c_bp", v:m.bp*(clin.bp?1:0), kind:"clin"},
+    {lk:"c_po", v:m.po*(clin.po?1:0), kind:"clin"},
+    {lk:"c_ext", v:m.ext*(clin.ext?1:0), kind:"clin"}
+  ];
+  const eta = parts.reduce((s,p)=>s+p.v,0);
+  return {prs, z, eta, p:1/(1+Math.exp(-eta)), parts};
+}
+window.__score = score;
+
+const state = {view:"start", model:"int", geno:{}, clin:{bmi:1, htn:1, ra:0, ste:0, bp:1, deno:0, bd:0, po:1, mm:36, ext:1, imp:0}};
+GENES.forEach((g,i)=> state.geno[g.id] = i<5 ? 1 : 0);   // example profile: 5 of 7 carried
+
+function seg(id, on, labels, onChange){
+  const w = document.createElement("div"); w.className="seg"; w.setAttribute("role","group");
+  labels.forEach((t,i)=>{
+    const b=document.createElement("button"); b.type="button"; b.id=id+"-"+i; b.textContent=t;
+    const val = i===0?1:0; b.setAttribute("aria-pressed", String(on===val));
+    b.addEventListener("click",()=>{onChange(val); render();});
+    w.appendChild(b);
+  });
+  return w;
+}
+function buildInputs(){
+  const gEl=document.getElementById("genes"); gEl.innerHTML="";
+  GENES.forEach(g=>{
+    const r=document.createElement("div"); r.className="row gene";
+    r.innerHTML=`<div class="lab"><div class="name"><i>${g.gene}</i> <span class="meta">${g.rs}</span></div></div>`;
+    r.appendChild(seg(g.id, state.geno[g.id], [t("car"),t("non")], v=>state.geno[g.id]=v));
+    gEl.appendChild(r);
+  });
+  const cEl=document.getElementById("clin"); cEl.innerHTML="";
+  const m=MODELS[state.model];
+  CLIN.forEach(c=>{
+    const r=document.createElement("div"); r.className="row"+(m.uses.clin?"":" off");
+    const tip = T[LANG].tips[c.key];
+    r.innerHTML=`<div class="lab"><label class="name" for="${c.id}-in">${t(c.nk)}</label>${tip?`<span class="info"><button type="button" class="ib" id="${c.id}-tip" aria-describedby="${c.id}-tt" aria-label="${t("c_"+c.key)}: info">i</button><span class="tt" role="tooltip" id="${c.id}-tt">${tip}</span></span>`:""}</div>`;
+    if (c.type==="bin") {
+      r.querySelector("label").removeAttribute("for");
+      r.appendChild(seg(c.id, state.clin[c.key], [t("yes"),t("no")], v=>state.clin[c.key]=v));
+    } else if (c.type==="bmi") {
+      const sel=document.createElement("select"); sel.id=c.id+"-in"; sel.className="inp";
+      t("bmiL").forEach((lab,i)=>{ const o=document.createElement("option"); o.value=i; o.textContent=lab; if(i===state.clin.bmi) o.selected=true; sel.appendChild(o); });
+      sel.addEventListener("change",()=>{state.clin.bmi=+sel.value; render();});
+      r.appendChild(sel);
+    } else {
+      const w=document.createElement("span"); w.className="numw";
+      w.innerHTML=`<input class="inp" id="${c.id}-in" type="number" min="0" max="600" step="1" inputmode="numeric" value="${state.clin.mm}"><span class="meta">${t("months")}</span>`;
+      w.querySelector("input").addEventListener("change",e=>{const v=Math.max(0,Math.round(+e.target.value||0)); state.clin.mm=v; render();});
+      r.appendChild(w);
+    }
+    cEl.appendChild(r);
+  });
+  document.querySelectorAll("#genes .row").forEach(r=>r.classList.toggle("off", !m.uses.prs));
+}
+/* round half to even, as R does — keeps 1.25 → 1.2 and 6.25 → 6.2, matching the manuscript */
+function rhe(x,d){ const m=Math.pow(10,d), v=x*m, f=Math.floor(v), r=v-f;
+  const n = Math.abs(r-0.5)<1e-9 ? (f%2===0?f:f+1) : Math.round(v); return (n/m).toFixed(d); }
+function fmtPct(x){ return x>=0.9995 ? (100*x).toFixed(2)+"%" : (100*x).toFixed(1)+"%"; }
+function render(){
+  applyStatic();
+  document.getElementById("panel-start").hidden = state.view!=="start";
+  document.querySelector(".wrap").dataset.view = state.view;
+  document.getElementById("panel-in").hidden = state.view!=="input";
+  document.getElementById("panel-out").hidden = state.view!=="result";
+  document.getElementById("panel-calc").hidden = state.view!=="calc";
+  buildInputs();
+  const m=MODELS[state.model], r=score(state.model, state.geno, state.clin);
+  document.getElementById("mname").textContent=t(m.nk);
+  const pos = r.p >= 0.5;
+  const v=document.getElementById("verdict");
+  const pc=Math.min(1,Math.max(0,r.p));
+  // diverging scale in OKLCH: teal (low) → warm grey at the 0.50 cutoff → crimson (high)
+  const lo={c:.09,h:200}, mid={c:.03,h:80}, hi={c:.14,h:15};
+  const u = pc<0.5 ? pc/0.5 : (pc-0.5)/0.5, A = pc<0.5?lo:mid, B = pc<0.5?mid:hi;
+  const res=document.querySelector(".result");
+  res.style.setProperty("--rh", (A.h+(B.h-A.h)*u).toFixed(1));
+  res.style.setProperty("--rc", (A.c+(B.c-A.c)*u).toFixed(3));
+  res.style.setProperty("--a", (0.07 + 0.23*Math.abs(pc-0.5)/0.5).toFixed(3));  // deeper the farther from the cutoff
+  const d=Math.abs(r.p-0.5).toFixed(2);
+  document.getElementById("pmargin").textContent = pos ? t("mAbove")(d) : t("mBelow")(d);
+  document.getElementById("vtag").textContent = pos ? t("vpos") : t("vneg");
+  document.getElementById("pnum").textContent = r.p.toFixed(2);
+  document.getElementById("dot").style.left = (100*Math.min(1,Math.max(0,r.p)))+"%";
+  const n = GENES.filter(g=>state.geno[g.id]).length;
+  document.getElementById("kcount").textContent = n+" / 7";
+  document.getElementById("kprs").textContent = r.prs.toFixed(2);
+  document.getElementById("kz").textContent = (r.z>=0?"+":"−")+Math.abs(r.z).toFixed(2)+" SD";
+  // genetic profile: seven variants as a stacked bar against the maximum possible score
+  const WMAX = GENES.reduce((a,g)=>a+g.w,0);
+  const order = [...GENES].sort((a,b)=>b.w-a.w);
+  const stack=document.getElementById("stack");
+  stack.querySelectorAll(".seg7").forEach(e=>e.remove());
+  const avgEl=document.getElementById("avg");
+  order.forEach(g=>{
+    const on=!!state.geno[g.id], d=document.createElement("div");
+    d.className="seg7"+(on?"":" off"); d.style.width=(100*g.w/WMAX)+"%";
+    const narrow = window.matchMedia && matchMedia("(max-width:640px)").matches;
+    d.textContent = (100*g.w/WMAX) > (narrow ? 13 : 8.5) ? g.gene : "";
+    d.title=g.gene+(on?" · carrier":" · non-carrier");
+    stack.insertBefore(d, avgEl);
+  });
+  // carried segments first, then gaps: reorder so carried ones sit left
+  [...stack.querySelectorAll(".seg7.off")].forEach(e=>stack.insertBefore(e, avgEl));
+  [...stack.querySelectorAll(".seg7:not(.off)")].forEach((e,i)=>{ e.style.background = i%2 ? "#5C7FCC" : "var(--accent)"; });
+  avgEl.style.left=(100*MU/WMAX)+"%";
+  document.getElementById("gpsum").textContent = t("gpSum")(n, (100*r.prs/WMAX).toFixed(0));
+  const vl=document.getElementById("vlist"); vl.innerHTML="";
+  order.forEach((g,i)=>{
+    const on=!!state.geno[g.id], li=document.createElement("li");
+    li.className=on?"on":"";
+    li.innerHTML=`<div class="vh"><span class="g">${g.gene}</span><span class="st">${on?"✓ "+t("car"):t("non")}</span></div>
+      <div class="wrow"><div class="wbar"><span style="width:${(100*g.w/order[0].w).toFixed(0)}%"></span></div><span class="wl">${t("rank")(i+1)}</span></div>
+      <span class="rs">${g.rs}</span>`;
+    vl.appendChild(li);
+  });
+  document.getElementById("clinnote").hidden = !m.uses.clin;
+  // settings table
+  const tb=document.getElementById("ptab"); tb.innerHTML="";
+  SETTINGS.forEach(s=>{
+    const N=1000, cs=N*s.f, nc=N-cs, tp=m.se*cs, fn=(1-m.se)*cs, tn=m.sp*nc, fp=(1-m.sp)*nc;
+    const posn=Math.round(tp+fp+1e-8);
+    tb.insertAdjacentHTML("beforeend",`<tr><td>${t(s.lk)}</td><td class="mono">${posn}</td><td class="mono">${rhe(fn, fn<1?2:1)}</td><td class="mono">${fmtPct(tn/(tn+fn))}</td><td class="mono">${fmtPct(tp/(tp+fp))}</td></tr>`);
+  });
+  document.getElementById("sesp").textContent = t("sesp")(t(m.nk), (100*m.se).toFixed(1), (100*m.sp).toFixed(1));
+}
+document.getElementById("all-car").addEventListener("click",()=>{GENES.forEach(g=>state.geno[g.id]=1); render();});
+document.getElementById("all-non").addEventListener("click",()=>{GENES.forEach(g=>state.geno[g.id]=0); render();});
+document.querySelectorAll(".lang button").forEach(b=>b.addEventListener("click",()=>{
+  LANG=b.dataset.l; try{ localStorage.setItem("mronj-lang", LANG); }catch(e){} render(); }));
+function show(v){
+  state.view=v; render();
+  try{ window.scrollTo({top:0, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth"}); }catch(e){ window.scrollTo(0,0); }
+  if (v==="result") document.getElementById("h-out").focus({preventScroll:true});
+}
+let calcTimer=null;
+function runCalc(){
+  show("calc");
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const DUR = reduce ? 400 : 4800, C = 326.73, t0 = performance.now();
+  const fg=document.getElementById("ring-fg"), pct=document.getElementById("pct"),
+        st=document.getElementById("cstep"), fill=document.getElementById("cfill");
+  const steps = t("steps");
+  cancelAnimationFrame(calcTimer);
+  const tick = now => {
+    const u = Math.min(1,(now-t0)/DUR), e = 1-Math.pow(1-u,2.2);   // ease-out
+    const p = Math.round(e*100);
+    fg.style.strokeDashoffset = (C*(1-e)).toFixed(2);
+    fill.style.width = p+"%"; pct.textContent = p+"%";
+    st.textContent = steps[Math.min(steps.length-1, Math.floor(e*(steps.length-1)+ (u>=1?1:0)))];
+    if (u<1) calcTimer = requestAnimationFrame(tick);
+    else calcTimer = setTimeout(()=>show("result"), reduce?0:250);
+  };
+  calcTimer = requestAnimationFrame(tick);
+}
+document.getElementById("go").addEventListener("click",runCalc);
+document.getElementById("start").addEventListener("click",()=>show("input"));
+document.getElementById("back").addEventListener("click",()=>show("input"));
+let rz; window.addEventListener("resize",()=>{clearTimeout(rz); rz=setTimeout(render,150);});
+render();
+</script>
+
+</body>
+</html>
