@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>MRONJ-MARI</title>
+<title>MARI</title>
 <style>
 :root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 body{margin:0} img{max-width:100%} [hidden]{display:none!important}
@@ -56,6 +56,8 @@ h1{font-size:clamp(24px,3.2vw,32px);line-height:1.15;margin:0;text-wrap:balance;
 .row .lab{min-width:0;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 .info{position:relative;display:inline-flex}
 .titlerow{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.hsub{margin:-2px 0 0;color:var(--muted);font-size:14px}
+.wrap[data-view="start"] .hsub{display:none}
 .ib-lg{width:22px;height:22px;font-size:13px}
 .tt-wide{width:min(440px,86vw)}
 .ib{font:600 11px/1 var(--f-ui);width:17px;height:17px;border-radius:50%;border:1px solid var(--line);background:var(--accent-soft);color:var(--accent);cursor:help;padding:0;display:inline-grid;place-items:center}
@@ -207,6 +209,7 @@ code{font-family:var(--f-data);font-size:12px}
   <header>
     <div class="top"><div class="eyebrow" data-i18n="eyebrow"></div><div class="lang" role="group" aria-label="Language"><button id="l-en" type="button" data-l="en">EN</button><button id="l-ko" type="button" data-l="ko">한국어</button></div></div>
     <div class="titlerow"><h1 data-i18n="h1"></h1><span class="info"><button type="button" class="ib ib-lg" id="about-tip" aria-describedby="about-tt" aria-label="About this calculator">i</button><span class="tt tt-wide" role="tooltip" id="about-tt"><span data-i18n="lede"></span> <span data-i18n="banT"></span></span></span></div>
+    <p class="hsub" data-i18n="sub"></p>
     
   </header>
 
@@ -287,7 +290,7 @@ code{font-family:var(--f-data);font-size:12px}
 <script>
 
 const T = {
- en:{eyebrow:"Beta version v0.9", h1:"MRONJ-MARI", sub:"MRONJ Assessment of Risk with Inherited variants",
+ en:{eyebrow:"Beta version v0.9", h1:"MARI", sub:"MRONJ Assessment of Risk with Inherited variants",
   lede:"Enter carrier status for the seven panel variants and the 11 clinical items, then select View result. The calculator applies the model developed in the study, with a fixed cutoff of 0.50.",
   banB:"Not for clinical decisions.", banT:"The score shows whether a patient falls above or below the 0.50 cutoff. It is not the probability of developing MRONJ.",
   model:"Model", b_int:"Integrated", b_prs:"PRS only", b_clin:"Clinical only",
@@ -322,7 +325,7 @@ const T = {
   sesp:(n,se,sp)=>`In the study, the model identified ${se}% of patients with MRONJ (sensitivity) and ${sp}% of patients without MRONJ (specificity) at the 0.50 cutoff. These figures do not change with the profile entered above.`,
   f1:"<b>Caution.</b> This calculator is a beta version for research use only and is not a medical device. It has not been approved by any regulatory authority and has been evaluated only in small Korean study cohorts. The score is a classification score relative to the 0.50 cutoff, not an absolute probability of developing MRONJ. Do not use it to start, stop or delay antiresorptive therapy or necessary dental treatment; follow current clinical guidelines and the judgement of the treating clinician.",
   f2:"<b>Copyright.</b> © 2026 Dong Min Lim, Hyun Hwang, Jin Woo Kim, Yun Hak Kim and co-authors. All rights reserved. No part of this calculator, including its model, coefficients, source code and content, may be reproduced, distributed, modified, transmitted, publicly displayed or used for commercial purposes, in whole or in part, without the prior written permission of the copyright holders. Unauthorized use or distribution is strictly prohibited and may result in legal action under applicable copyright law."},
- ko:{eyebrow:"베타 버전 v0.9", h1:"MRONJ-MARI", sub:"유전 변이 기반 MRONJ 위험 평가 (MRONJ Assessment of Risk with Inherited variants)",
+ ko:{eyebrow:"베타 버전 v0.9", h1:"MARI", sub:"MRONJ Assessment of Risk with Inherited variants · 유전 변이 기반 MRONJ 위험 평가",
   lede:"7개 패널 변이의 보인자 여부와 임상 항목 11개를 입력한 뒤 결과 보기를 누르세요. 연구에서 개발한 모델을 절단값 0.50으로 그대로 적용합니다.",
   banB:"임상 결정에 사용하지 마세요.", banT:"점수는 환자가 절단값 0.50보다 높은지 낮은지를 보여줍니다. MRONJ가 발생할 확률이 아닙니다.",
   model:"모델", b_int:"통합", b_prs:"PRS 단독", b_clin:"임상 단독",
