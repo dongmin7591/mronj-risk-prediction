@@ -58,6 +58,8 @@ h1{font-size:clamp(24px,3.2vw,32px);line-height:1.15;margin:0;text-wrap:balance;
 .titlerow{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .hsub{margin:-2px 0 0;color:var(--muted);font-size:14px}
 .hsub b,.stsub b{color:var(--ink);font-weight:800}
+.sttitle b,.hfull b{font-weight:800;color:var(--accent)}
+.hfull{font-size:clamp(20px,2.6vw,28px);font-weight:500;line-height:1.2}
 .wrap[data-view="start"] .hsub{display:none}
 .ib-lg{width:22px;height:22px;font-size:13px}
 .tt-wide{width:min(440px,86vw)}
@@ -119,7 +121,7 @@ h1{font-size:clamp(24px,3.2vw,32px);line-height:1.15;margin:0;text-wrap:balance;
 .cbarline{width:min(320px,80%);height:4px;border-radius:2px;background:var(--line2);overflow:hidden}
 .cbarline span{display:block;height:100%;width:0;background:var(--accent)}
 .start{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:36px;min-height:min(62vh,560px);padding-block:24px}
-.sttitle{margin:0;font-size:clamp(30px,5.2vw,52px);line-height:1.1;font-weight:700;letter-spacing:-.01em;text-wrap:balance;color:var(--ink)}
+.sttitle{margin:0;font-size:clamp(26px,4.4vw,44px);line-height:1.18;font-weight:500;max-width:22ch;letter-spacing:-.01em;text-wrap:balance;color:var(--ink)}
 .stwrap{display:flex;flex-direction:column;gap:10px;align-items:center}
 .stsub{margin:0;color:var(--muted);font-size:clamp(15px,2vw,19px);letter-spacing:.02em}
 .primary.big{font-size:20px;padding:18px 56px;border-radius:14px;min-width:min(280px,80vw);box-shadow:0 6px 18px rgba(62,99,184,.22)}
@@ -209,14 +211,13 @@ code{font-family:var(--f-data);font-size:12px}
 <div class="wrap" data-view="start">
   <header>
     <div class="top"><div class="eyebrow" data-i18n="eyebrow"></div><div class="lang" role="group" aria-label="Language"><button id="l-en" type="button" data-l="en">EN</button><button id="l-ko" type="button" data-l="ko">한국어</button></div></div>
-    <div class="titlerow"><h1 data-i18n="h1"></h1><span class="info"><button type="button" class="ib ib-lg" id="about-tip" aria-describedby="about-tt" aria-label="About this calculator">i</button><span class="tt tt-wide" role="tooltip" id="about-tt"><span data-i18n="lede"></span> <span data-i18n="banT"></span></span></span></div>
-    <p class="hsub" data-i18n-html="sub"></p>
+    <div class="titlerow"><h1 class="hfull" data-i18n-html="sub"></h1><span class="info"><button type="button" class="ib ib-lg" id="about-tip" aria-describedby="about-tt" aria-label="About this calculator">i</button><span class="tt tt-wide" role="tooltip" id="about-tt"><span data-i18n="lede"></span> <span data-i18n="banT"></span></span></span></div>
     
   </header>
 
   <div class="grid">
     <section class="start" id="panel-start" aria-labelledby="h-start">
-      <div class="stwrap"><h2 id="h-start" class="sttitle" data-i18n="h1"></h2><p class="stsub" data-i18n-html="sub"></p></div>
+      <div class="stwrap"><h2 id="h-start" class="sttitle" data-i18n-html="sub"></h2></div>
       <button class="primary big" id="start" type="button" data-i18n="stB"></button>
     </section>
 
