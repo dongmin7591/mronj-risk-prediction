@@ -728,7 +728,7 @@ function runCalc(){
   cancelAnimationFrame(rafId); clearTimeout(toId);
   show("calc");
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const DUR = reduce ? 400 : 3800, C = 326.73, t0 = performance.now();
+  const DUR = reduce ? 400 : 2800, C = 326.73, t0 = performance.now();
   const fg=document.getElementById("ring-fg"), pct=document.getElementById("pct"),
         st=document.getElementById("cstep"), fill=document.getElementById("cfill");
   const tick = now => {
