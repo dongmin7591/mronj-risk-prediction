@@ -270,7 +270,6 @@ td.mono{font-family:var(--f-data)}
 
       <h2><span data-i18n="gpT"></span> <small id="gpsum"></small></h2>
       <ul class="vlist" id="vlist"></ul>
-      <p class="note" data-i18n="cnote"></p>
 
       <h2><span data-i18n="pp"></span> <small data-i18n="pps"></small></h2>
       <div class="settings">
@@ -337,7 +336,6 @@ const T = {
   mAbove:d=>`${d} above the 0.50 cutoff`, mBelow:d=>`${d} below the 0.50 cutoff`,
   unit:"model score (0–1)", tick:"0.50 cutoff", kc:"Variants carried", kp:"Genetic score", kz:"Compared with study average",
   gpT:"Germline variant profile", gpSum:n=>`${n} of 7 variants carried`,
-  cnote:"Tooth extraction and bisphosphonate therapy lower the score because, in the group used to build the model, every patient without MRONJ had undergone tooth extraction and more of them had received bisphosphonates. This does not mean that these factors protect against MRONJ.",
   pp:"Projected performance by setting", pps:"at the 0.50 cutoff",
   th1:"Assumed incidence", th2:"Screen-positive / 1,000", th3:"Missed cases / 1,000",
   s1:"0.1% · osteoporosis", s2:"1%", s3:"5% · high-dose oncology",
@@ -380,7 +378,6 @@ const T = {
   mAbove:d=>`절단값 0.50보다 ${d} 높음`, mBelow:d=>`절단값 0.50보다 ${d} 낮음`,
   unit:"모델 점수 (0–1)", tick:"절단값 0.50", kc:"보유 변이 수", kp:"유전 점수", kz:"연구 평균 대비",
   gpT:"유전 변이 프로필", gpSum:n=>`7개 중 ${n}개 보유`,
-  cnote:"발치와 비스포스포네이트 투여가 점수를 낮추는 것은, 모델을 만든 환자군에서 MRONJ가 생기지 않은 환자가 모두 발치를 받았고 비스포스포네이트 투여 비율도 더 높았기 때문입니다. 이 요인들이 MRONJ를 예방한다는 뜻은 아닙니다.",
   pp:"환경별 예상 성능", pps:"절단값 0.50 기준",
   th1:"가정 발생률", th2:"1,000명당 양성", th3:"1,000명당 놓친 환자",
   s1:"0.1% · 골다공증", s2:"1%", s3:"5% · 고용량 종양 치료",
