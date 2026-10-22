@@ -35,10 +35,30 @@ header{display:flex;flex-direction:column;gap:8px}
 .lang button{font:inherit;font-size:12.5px;border:0;padding:5px 11px;background:transparent;color:var(--muted);cursor:pointer}
 .lang button+button{border-left:1px solid var(--line)}
 .lang button[aria-pressed="true"]{background:var(--accent-soft);color:var(--accent);font-weight:700}
+.topr{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.listbtn .cnt{font-family:var(--f-data);font-size:11.5px;color:var(--accent);font-weight:700}
+.rbtns{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.ptline{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline;font-size:13.5px;color:var(--muted)}
+.ptline b{font-size:16px;color:var(--ink)}
+.ptline .hint{color:var(--req);font-size:12.5px}
+.ptline .ok,.ptline .hint{margin-left:6px}
+.ptline .ok{color:#2E7D5B;font-size:12.5px}
+input.txt{width:min(240px,52vw);text-align:left;font-family:var(--f-ui)}
+.chip.danger{color:#A33A2B;border-color:#E9C9C3}
+.ltable td,.ltable th{white-space:nowrap}
+.ltable td:first-child{font-weight:600}
+.ltable .grp{font-size:11.5px;font-weight:700;padding:2px 8px;border-radius:999px}
+.ltable .grp.hi{background:#F6E3DF;color:#9B3A2C} .ltable .grp.lo{background:#DFF0F0;color:#1F6E73}
+.ltable .act{display:flex;gap:6px;justify-content:flex-end}
+.ltable .act button{font:inherit;font-size:12px;border:1px solid var(--line);background:var(--surface);border-radius:7px;padding:3px 8px;cursor:pointer;color:var(--ink)}
+.ltable .act button.del{color:#A33A2B}
+.lwrap{overflow-x:auto}
+.ltools{align-items:center}
 .hfull{margin:0;font-size:clamp(20px,2.8vw,27px);font-weight:500;line-height:1.25;text-wrap:balance}
 .hfull .ttl b,.sttitle b{font-weight:800;color:var(--accent)}
 .hfull .info{vertical-align:3px;margin-left:6px}
 .wrap[data-view="start"] .hfull,.wrap[data-view="start"] .foot,.wrap[data-view="calc"] .foot{display:none}
+.wrap[data-view="list"] .foot{display:none}
 
 /* panels */
 .panel{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 18px 20px;display:flex;flex-direction:column;gap:14px;min-width:0}
@@ -124,18 +144,6 @@ input.inp{width:5.5em;font-family:var(--f-data);text-align:right}
 .kv div{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 10px;min-width:0}
 .kv span{display:block;font-size:11.5px;color:var(--muted)}
 .kv b{font-family:var(--f-data);font-weight:500;font-size:15px;font-variant-numeric:tabular-nums}
-.stack{position:relative;display:flex;height:36px;border-radius:8px;background:var(--line2);margin-top:26px}
-.stack .seg7{height:100%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;overflow:hidden;white-space:nowrap;box-shadow:inset -2px 0 0 var(--surface)}
-.stack .seg7:first-child{border-radius:8px 0 0 8px}
-.stack .seg7:last-of-type{border-radius:0 8px 8px 0}
-.stack .seg7.off{background:repeating-linear-gradient(135deg,var(--line2) 0 6px,var(--surface) 6px 10px)!important;color:#6F7C89;font-weight:600}
-.stack .avg{position:absolute;top:-22px;bottom:-6px;width:0;border-left:2px dashed var(--ink);opacity:.7}
-.stack .avg span{position:absolute;top:-1px;left:5px;font-size:12px;font-weight:600;color:var(--ink);white-space:nowrap}
-.stackax{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-top:-4px}
-.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12.5px;color:var(--muted)}
-.legend i{display:inline-block;width:14px;height:14px;border-radius:3px;vertical-align:-2px;margin-right:6px}
-.legend .k1{background:var(--accent)}
-.legend .k2{background:repeating-linear-gradient(135deg,var(--line2) 0 4px,var(--surface) 4px 7px);border:1px solid var(--line)}
 .vlist{list-style:none;margin:4px 0 0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px}
 .vlist li{border:1px solid var(--line);border-radius:10px;padding:11px 12px;display:flex;flex-direction:column;gap:7px;min-width:0;background:var(--surface)}
 .vlist li.on{border-color:color-mix(in srgb,var(--accent) 40%,var(--line));background:var(--accent-soft)}
@@ -143,11 +151,6 @@ input.inp{width:5.5em;font-family:var(--f-data);text-align:right}
 .vlist .g{font-weight:700;font-style:italic;font-size:16px}
 .vlist .st{font-size:12px;font-weight:600;padding:3px 9px;border-radius:999px;border:1px solid var(--line);color:var(--muted);background:var(--surface);white-space:nowrap}
 .vlist li.on .st{background:var(--accent);border-color:var(--accent);color:#fff}
-.vlist .wrow{display:flex;align-items:center;gap:8px}
-.vlist .wbar{flex:1;height:6px;border-radius:3px;background:var(--line2);overflow:hidden}
-.vlist .wbar span{display:block;height:100%;background:#B7C2CE}
-.vlist li.on .wbar span{background:var(--accent)}
-.vlist .wl{font-size:12px;color:var(--muted);white-space:nowrap}
 .vlist .rs{font-family:var(--f-data);font-size:11.5px;color:var(--muted)}
 .settings{display:flex;flex-direction:column;gap:8px}
 table{width:100%;border-collapse:collapse;font-size:13px}
@@ -175,16 +178,20 @@ td.mono{font-family:var(--f-data)}
   .tt::before{display:none}
   .sttitle{white-space:normal;text-wrap:balance;max-width:20ch;font-size:26px}
   .score .num{font-size:38px}
-  .stack .seg7{font-size:10.5px}
   .vlist{grid-template-columns:1fr 1fr;gap:8px}
   .vlist li{padding:9px 10px}
   .vlist .vh{flex-direction:column;align-items:flex-start;gap:5px}
   .vlist .g{font-size:14.5px}
   .vlist .st{font-size:11px;padding:2px 7px}
-  .vlist .wl{font-size:11px}
   .actions{flex-direction:column-reverse;align-items:stretch}
   .primary{width:100%}
   .progress{text-align:center}
+  .ltable thead{display:none}
+  .ltable tr{display:grid;grid-template-columns:1fr auto;gap:2px 10px;padding:10px 0;border-top:1px solid var(--line)}
+  .ltable td{border:0;padding:0;white-space:normal;text-align:left;font-size:12.5px}
+  .ltable td[data-l]::before{content:attr(data-l) "  ";color:var(--muted);font-size:11.5px}
+  .ltable td.act{grid-column:1 / -1;justify-content:flex-start;margin-top:4px}
+  .topr{gap:6px}
   /* projection table becomes one card per setting */
   .ptable thead{display:none}
   .ptable tr{display:grid;grid-template-columns:1fr 1fr;gap:2px 12px;padding:9px 0;border-top:1px solid var(--line)}
@@ -197,12 +204,11 @@ td.mono{font-family:var(--f-data)}
 </head>
 <body>
 
-
 <div class="wrap" data-view="start">
   <header>
     <div class="top">
       <div class="eyebrow" data-i18n="eyebrow"></div>
-      <div class="lang" role="group" id="lang-group" data-i18n-aria="aLang"><button id="l-en" type="button" data-l="en">EN</button><button id="l-ko" type="button" data-l="ko">한국어</button></div>
+      <div class="topr"><button class="chip listbtn" id="open-list" type="button"><span data-i18n="listB"></span> <span class="cnt" id="list-cnt"></span></button><div class="lang" role="group" id="lang-group" data-i18n-aria="aLang"><button id="l-en" type="button" data-l="en">EN</button><button id="l-ko" type="button" data-l="ko">한국어</button></div></div>
     </div>
     <h1 class="hfull"><span class="ttl" data-i18n-html="full"></span><span class="info"><button type="button" class="ib ib-lg" id="about-tip" aria-describedby="about-tt" data-i18n-aria="aAbout">i</button><span class="tt tt-wide" role="tooltip" id="about-tt"><span data-i18n="about1"></span> <span data-i18n="about2"></span></span></span></h1>
   </header>
@@ -214,6 +220,8 @@ td.mono{font-family:var(--f-data)}
     </section>
 
     <section class="panel" id="panel-in" aria-labelledby="h-in" hidden>
+      <h2><span data-i18n="ptT"></span></h2>
+      <div class="rows" id="patient"></div>
       <h2 id="h-in"><span data-i18n="gp"></span> <small data-i18n="gps"></small></h2>
       <div class="tools">
         <button class="chip" id="all-car" type="button" data-i18n="allc"></button>
@@ -223,7 +231,6 @@ td.mono{font-family:var(--f-data)}
       <div class="rows" id="genes"></div>
 
       <h2><span data-i18n="ci"></span></h2>
-      <p class="note" data-i18n="cz"></p>
       <div class="rows" id="clin"></div>
       <div class="actions">
         <span class="progress" id="progress" aria-live="polite"></span>
@@ -243,7 +250,8 @@ td.mono{font-family:var(--f-data)}
     </section>
 
     <section class="panel result" id="panel-out" aria-labelledby="h-out" hidden>
-      <div class="rhead"><button class="chip back" id="back" type="button" data-i18n="back"></button><span class="exflag" id="exflag" data-i18n="exF" hidden></span></div>
+      <div class="rhead"><button class="chip back" id="back" type="button" data-i18n="back"></button><span class="rbtns"><span class="exflag" id="exflag" data-i18n="exF" hidden></span><button class="chip" id="new-pt" type="button" data-i18n="newB"></button></span></div>
+      <div class="ptline" id="ptline"></div>
       <h2 id="h-out" tabindex="-1"><span data-i18n="res"></span></h2>
       <div class="verdict" id="verdict">
         <span class="tag" id="vtag"></span>
@@ -261,9 +269,6 @@ td.mono{font-family:var(--f-data)}
       </div>
 
       <h2><span data-i18n="gpT"></span> <small id="gpsum"></small></h2>
-      <div class="stack" id="stack" aria-hidden="true"><div class="avg" id="avg"><span data-i18n="avgL"></span></div></div>
-      <div class="stackax"><span>0</span><span data-i18n="maxL"></span></div>
-      <div class="legend"><span><i class="k1"></i><span data-i18n="lg1"></span></span><span><i class="k2"></i><span data-i18n="lg2"></span></span></div>
       <ul class="vlist" id="vlist"></ul>
       <p class="note" data-i18n="cnote"></p>
 
@@ -275,6 +280,14 @@ td.mono{font-family:var(--f-data)}
         </table>
         <p class="note" id="sesp"></p>
       </div>
+    </section>
+    <section class="panel" id="panel-list" aria-labelledby="h-list" hidden>
+      <div class="rhead"><button class="chip back" id="list-back" type="button" data-i18n="backL"></button><button class="chip" id="new-pt2" type="button" data-i18n="newB"></button></div>
+      <h2 id="h-list" tabindex="-1"><span data-i18n="listT"></span> <small id="list-sum"></small></h2>
+      <p class="note" data-i18n="listNote"></p>
+      <div class="lwrap"><table class="ltable"><thead><tr><th data-i18n="lh1"></th><th data-i18n="lh2"></th><th data-i18n="lh3"></th><th data-i18n="lh4"></th><th data-i18n="lh5"></th><th data-i18n="lh6"></th><th data-i18n="lh7"></th><th></th></tr></thead><tbody id="ltab"></tbody></table></div>
+      <p class="note" id="list-empty" data-i18n="listEmpty" hidden></p>
+      <div class="tools ltools"><button class="chip" id="csv" type="button" data-i18n="csvB"></button><button class="chip" id="copy" type="button" data-i18n="copyB"></button><button class="chip danger" id="clear" type="button" data-i18n="clearB"></button><span class="note" id="list-msg" role="status"></span></div>
     </section>
   </main>
 
@@ -296,7 +309,13 @@ const T = {
   allc:"Mark all carrier", alln:"Mark all non-carrier", exB:"Load example patient",
   car:"Carrier", non:"Non-carrier", yes:"Yes", no:"No", req:"Required", select:"Select…", months:"months",
   ci:"Clinical items",
-  cz:"Only bisphosphonate therapy, oral bisphosphonate and history of tooth extraction change the score, so these three are required. The other eight items did not contribute to the final model and are optional. Hover over or tap the i icons for definitions.",
+  ptT:"Patient", pName:"Patient name or ID", pAge:"Age", pSex:"Sex", years:"years", fem:"Female", mal:"Male",
+  listB:"Patient list", listT:"Saved patient results", listSum:n=>`${n} patient${n===1?"":"s"}`,
+  listNote:"Results are saved automatically when a name or ID is entered. They are stored only in this browser on this device and are not sent anywhere. Use an ID instead of a full name on shared or public computers.",
+  listEmpty:"No saved results yet. Enter a patient name or ID before viewing the result.",
+  lh1:"Name / ID", lh2:"Age", lh3:"Sex", lh4:"Score", lh5:"Group", lh6:"Variants", lh7:"Saved", hiG:"Higher-risk", loG:"Lower-risk",
+  openB:"Open", delB:"Delete", csvB:"Download CSV", copyB:"Copy table", clearB:"Delete all", clearQ:"Select Delete all again to confirm.", copied:"Table copied.", copyFail:"Copy failed. Select the table and copy it manually.", csvDone:"CSV file created.",
+  newB:"New patient", backL:"← Back", saveHint:"Not saved: enter a patient name or ID to add this result to the patient list.", savedMsg:"Saved to patient list",
   c_bp:"Bisphosphonate therapy", c_po:"Oral bisphosphonate", c_ext:"History of tooth extraction",
   c_bmi:"BMI category", c_htn:"Hypertension", c_ra:"Rheumatoid arthritis", c_ste:"Systemic glucocorticoid use",
   c_deno:"Denosumab therapy", c_bd:"Both bisphosphonate and denosumab", c_mm:"Total antiresorptive treatment duration", c_imp:"Dental implant placement",
@@ -317,15 +336,14 @@ const T = {
   vpos:"Above cutoff · higher-risk group", vneg:"Below cutoff · lower-risk group",
   mAbove:d=>`${d} above the 0.50 cutoff`, mBelow:d=>`${d} below the 0.50 cutoff`,
   unit:"model score (0–1)", tick:"0.50 cutoff", kc:"Variants carried", kp:"Genetic score", kz:"Compared with study average",
-  gpT:"Germline variant profile", gpSum:(n,p)=>`${n} of 7 variants · ${p}% of maximum genetic score`,
-  avgL:"Study average", maxL:"All 7 carried", rank:i=>`Weight #${i}`, lg1:"Carried", lg2:"Not carried", segC:"carrier", segN:"non-carrier",
+  gpT:"Germline variant profile", gpSum:n=>`${n} of 7 variants carried`,
   cnote:"Tooth extraction and bisphosphonate therapy lower the score because, in the group used to build the model, every patient without MRONJ had undergone tooth extraction and more of them had received bisphosphonates. This does not mean that these factors protect against MRONJ.",
   pp:"Projected performance by setting", pps:"at the 0.50 cutoff",
   th1:"Assumed incidence", th2:"Screen-positive / 1,000", th3:"Missed cases / 1,000",
   s1:"0.1% · osteoporosis", s2:"1%", s3:"5% · high-dose oncology",
   sesp:(se,sp)=>`In the study's test group of 21 patients, the model correctly classified 14 of 16 patients with MRONJ (sensitivity ${se}%) and 4 of 5 without MRONJ (specificity ${sp}%) at the 0.50 cutoff. Because these numbers are small, the projected values are approximate. Incidence values are illustrative assumptions, and the results do not depend on the profile entered above.`,
-  f1:"<b>Caution.</b> This calculator is a beta version for research use only and is not a medical device. It has not been approved by any regulatory authority and has been evaluated only in small Korean study cohorts. The score is a classification score relative to the 0.50 cutoff, not an absolute probability of developing MRONJ. Do not use it to start, stop or delay antiresorptive therapy or necessary dental treatment; follow current clinical guidelines and the judgement of the treating clinician.",
-  f2:"<b>Copyright.</b> © 2026 Dong Min Lim, Hyun Hwang, Jin Woo Kim, Yun Hak Kim and co-authors. All rights reserved. No part of this calculator, including its model, coefficients, source code and content, may be reproduced, distributed, modified, transmitted, publicly displayed or used for commercial purposes, in whole or in part, without the prior written permission of the copyright holders. Unauthorized use or distribution is strictly prohibited and may result in legal action under applicable copyright law."},
+  f1:"<b>Caution.</b> This calculator (beta version) is for research use only. It is not a medical device, has no regulatory approval and has been evaluated only in small Korean cohorts. Its score reflects classification using a 0.50 cutoff, not the absolute probability of developing MRONJ.",
+  f2:"<b>Copyright.</b> © 2026 Lim et al. All rights reserved. Reproduction, distribution, modification, transmission, public display or commercial use of any part of this calculator—including its model, coefficients, source code and content—requires prior written permission from the copyright holders."},
  ko:{eyebrow:"베타 버전 v0.9", full:FULL, aLang:"언어", aAbout:"계산기 설명", aInfo:"정의",
   about1:"7개 패널 변이의 보인자 여부와 임상 항목을 입력한 뒤 결과 보기를 누르세요. 연구에서 개발한 모델을 절단값 0.50으로 그대로 적용합니다.",
   about2:"점수는 환자가 절단값 0.50보다 높은지 낮은지를 보여줍니다. MRONJ가 발생할 확률이 아닙니다.",
@@ -334,7 +352,13 @@ const T = {
   allc:"모두 보인자", alln:"모두 비보인자", exB:"예시 환자 불러오기",
   car:"보인자", non:"비보인자", yes:"예", no:"아니오", req:"필수", select:"선택…", months:"개월",
   ci:"임상 항목",
-  cz:"점수에 영향을 주는 항목은 비스포스포네이트 투여, 경구 비스포스포네이트, 발치 이력뿐이어서 이 세 항목은 필수입니다. 나머지 8개 항목은 최종 모델에 반영되지 않아 선택 입력입니다. i 아이콘에 마우스를 올리거나 누르면 정의가 보입니다.",
+  ptT:"환자", pName:"환자 이름 또는 ID", pAge:"나이", pSex:"성별", years:"세", fem:"여성", mal:"남성",
+  listB:"환자 목록", listT:"저장된 환자 결과", listSum:n=>`${n}명`,
+  listNote:"이름이나 ID를 입력하면 결과가 자동으로 저장됩니다. 이 기기의 브라우저에만 저장되며 외부로 전송되지 않습니다. 공용 컴퓨터에서는 실명 대신 ID를 사용하세요.",
+  listEmpty:"저장된 결과가 없습니다. 결과를 보기 전에 환자 이름이나 ID를 입력하세요.",
+  lh1:"이름 / ID", lh2:"나이", lh3:"성별", lh4:"점수", lh5:"판정", lh6:"보유 변이", lh7:"저장일", hiG:"고위험군", loG:"저위험군",
+  openB:"열기", delB:"삭제", csvB:"CSV 내려받기", copyB:"표 복사", clearB:"전체 삭제", clearQ:"확인하려면 전체 삭제를 한 번 더 누르세요.", copied:"표를 복사했습니다.", copyFail:"복사하지 못했습니다. 표를 선택해 직접 복사하세요.", csvDone:"CSV 파일을 만들었습니다.",
+  newB:"새 환자", backL:"← 돌아가기", saveHint:"저장되지 않음: 환자 이름이나 ID를 입력하면 이 결과가 환자 목록에 추가됩니다.", savedMsg:"환자 목록에 저장됨",
   c_bp:"비스포스포네이트 투여", c_po:"경구 비스포스포네이트", c_ext:"발치 이력",
   c_bmi:"BMI 범주", c_htn:"고혈압", c_ra:"류마티스 관절염", c_ste:"전신 글루코코르티코이드(스테로이드) 사용",
   c_deno:"데노수맙 투여", c_bd:"비스포스포네이트·데노수맙 모두 투여", c_mm:"골흡수억제제 총 투여 기간", c_imp:"임플란트 식립",
@@ -355,15 +379,14 @@ const T = {
   vpos:"절단값 이상 · 고위험군", vneg:"절단값 미만 · 저위험군",
   mAbove:d=>`절단값 0.50보다 ${d} 높음`, mBelow:d=>`절단값 0.50보다 ${d} 낮음`,
   unit:"모델 점수 (0–1)", tick:"절단값 0.50", kc:"보유 변이 수", kp:"유전 점수", kz:"연구 평균 대비",
-  gpT:"유전 변이 프로필", gpSum:(n,p)=>`7개 중 ${n}개 보유 · 최대 유전 점수의 ${p}%`,
-  avgL:"연구 평균", maxL:"7개 모두 보유", rank:i=>`가중치 ${i}위`, lg1:"보유", lg2:"미보유", segC:"보인자", segN:"비보인자",
+  gpT:"유전 변이 프로필", gpSum:n=>`7개 중 ${n}개 보유`,
   cnote:"발치와 비스포스포네이트 투여가 점수를 낮추는 것은, 모델을 만든 환자군에서 MRONJ가 생기지 않은 환자가 모두 발치를 받았고 비스포스포네이트 투여 비율도 더 높았기 때문입니다. 이 요인들이 MRONJ를 예방한다는 뜻은 아닙니다.",
   pp:"환경별 예상 성능", pps:"절단값 0.50 기준",
   th1:"가정 발생률", th2:"1,000명당 양성", th3:"1,000명당 놓친 환자",
   s1:"0.1% · 골다공증", s2:"1%", s3:"5% · 고용량 종양 치료",
   sesp:(se,sp)=>`연구의 검증 환자 21명에서 이 모델은 절단값 0.50 기준으로 MRONJ 환자 16명 중 14명(민감도 ${se}%), MRONJ가 없는 환자 5명 중 4명(특이도 ${sp}%)을 바르게 분류했습니다. 표본이 작아 예상 성능은 근사값입니다. 발생률은 설명을 위한 가정값이며, 이 표는 위에 입력한 내용과 관계없이 일정합니다.`,
-  f1:"<b>주의.</b> 이 계산기는 연구용 베타 버전이며 의료기기가 아닙니다. 어떤 규제기관의 허가도 받지 않았고, 소규모 한국인 연구 코호트에서만 평가되었습니다. 점수는 절단값 0.50을 기준으로 한 분류 점수이며 MRONJ가 발생할 절대 확률이 아닙니다. 골흡수억제제 치료나 필요한 치과 치료를 시작·중단·연기하는 근거로 사용하지 마시고, 최신 진료지침과 담당 의료진의 판단을 따르십시오.",
-  f2:"<b>저작권 안내.</b> © 2026 임동민, 황현, 김진우, 김윤학 외 공동저자. All rights reserved. 본 계산기의 모델, 계수, 소스 코드 및 콘텐츠를 포함한 모든 저작물의 저작권은 저작권자에게 있습니다. 저작권자의 사전 서면 동의 없이 전부 또는 일부를 무단으로 복제, 배포, 수정, 전송, 게시하거나 상업적으로 이용하는 행위를 금지하며, 이를 위반할 경우 저작권법 등 관련 법령에 따라 민·형사상 책임을 질 수 있습니다."}
+  f1:"<b>주의.</b> 이 계산기(베타 버전)는 연구용으로만 사용할 수 있습니다. 의료기기가 아니며 규제기관의 허가를 받지 않았고, 소규모 한국인 코호트에서만 평가되었습니다. 점수는 절단값 0.50을 이용한 분류를 반영하며 MRONJ가 발생할 절대 확률이 아닙니다.",
+  f2:"<b>저작권.</b> © 2026 Lim et al. All rights reserved. 본 계산기의 모델, 계수, 소스 코드 및 콘텐츠를 포함한 모든 부분을 복제, 배포, 수정, 전송, 게시하거나 상업적으로 이용하려면 저작권자의 사전 서면 허가가 필요합니다."}
 };
 let LANG = "en";
 try { const v = localStorage.getItem("mronj-lang"); if (v==="ko"||v==="en") LANG=v; } catch(e){}
@@ -396,8 +419,6 @@ const CLIN = [   // req = changes the score; others have coefficient 0 in the fi
   {id:"c-imp",  key:"imp",  type:"bin"}
 ];
 const SETTINGS = [{lk:"s1", f:0.001},{lk:"s2", f:0.01},{lk:"s3", f:0.05}];
-const WMAX = GENES.reduce((a,g)=>a+g.w,0);
-const ORDER = [...GENES].sort((a,b)=>b.w-a.w);
 
 /* Pure scoring function — same arithmetic as predict() on the fitted model. */
 function score(geno, clin){
@@ -410,15 +431,33 @@ window.__score = score;
 
 /* ---------- state: nothing pre-selected ---------- */
 const EMPTY_CLIN = () => ({bmi:null, htn:null, ra:null, ste:null, bp:null, deno:null, bd:null, po:null, mm:null, ext:null, imp:null});
-const state = {view:"start", geno:{}, clin:EMPTY_CLIN(), example:false};
+const EMPTY_PT = () => ({name:"", age:null, sex:null});
+const state = {view:"start", geno:{}, clin:EMPTY_CLIN(), pt:EMPTY_PT(), example:false, recId:null};
 GENES.forEach(g=> state.geno[g.id]=null);
 const REQ_N = GENES.length + CLIN.filter(c=>c.req).length;
 function answered(){ return GENES.filter(g=>state.geno[g.id]!==null).length + CLIN.filter(c=>c.req && state.clin[c.key]!==null).length; }
+
+/* ---------- saved results: this browser only ---------- */
+const STORE="mari-records";
+function loadRecs(){ try{ const v=JSON.parse(localStorage.getItem(STORE)||"[]"); return Array.isArray(v)?v:[]; }catch(e){ return []; } }
+function saveRecs(a){ try{ localStorage.setItem(STORE, JSON.stringify(a)); return true; }catch(e){ return false; } }
+let RECS = loadRecs();
+function upsertRecord(r){
+  if (!state.pt.name.trim()) return false;
+  if (!state.recId) state.recId = "r"+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+  const rec = {id:state.recId, name:state.pt.name.trim(), age:state.pt.age, sex:state.pt.sex,
+    geno:{...state.geno}, clin:{...state.clin}, p:r.p, n:GENES.filter(g=>state.geno[g.id]===1).length, saved:new Date().toISOString(), example:state.example};
+  const i = RECS.findIndex(x=>x.id===rec.id);
+  if (i>=0) RECS[i]=rec; else RECS.unshift(rec);
+  saveRecs(RECS); updateCount(); return true;
+}
+function updateCount(){ document.getElementById("list-cnt").textContent = RECS.length ? "("+RECS.length+")" : ""; }
 
 /* ---------- helpers ---------- */
 function rhe(x,d){ const m=Math.pow(10,d), v=x*m, f=Math.floor(v), r=v-f;   // round half to even, as R does
   const n = Math.abs(r-0.5)<1e-9 ? (f%2===0?f:f+1) : Math.round(v); return (n/m).toFixed(d); }
 function fmtPct(x){ const v=100*x; return (v>=99.95||v<1 ? v.toFixed(2) : v.toFixed(1))+"%"; }
+function esc(x){ return String(x).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"})[c]); }
 function applyStatic(){
   document.documentElement.lang = LANG;
   document.querySelectorAll("[data-i18n]").forEach(el=>{ el.textContent = t(el.dataset.i18n); });
@@ -449,7 +488,22 @@ function buildInputs(){
     r.appendChild(seg(g.id, g.id+"-lab", [t("car"),t("non")], ()=>state.geno[g.id], v=>state.geno[g.id]=v));
     gEl.appendChild(r);
   });
+  const pEl=document.getElementById("patient"); pEl.innerHTML="";
+  { const r=document.createElement("div"); r.className="row";
+    r.innerHTML=`<div class="lab"><label class="name" for="p-name">${t("pName")}</label></div><input class="inp txt" id="p-name" type="text" maxlength="60" autocomplete="off">`;
+    const inp=r.querySelector("input"); inp.value=state.pt.name;
+    inp.addEventListener("input",()=>{ state.pt.name=inp.value; });
+    pEl.appendChild(r); }
   const cEl=document.getElementById("clin"); cEl.innerHTML="";
+  { const r=document.createElement("div"); r.className="row";
+    r.innerHTML=`<div class="lab"><label class="name" for="p-age">${t("pAge")}</label></div><span class="numw"><input class="inp" id="p-age" type="number" min="0" max="120" step="1" inputmode="numeric"><span class="meta">${t("years")}</span></span>`;
+    const inp=r.querySelector("input"); inp.value = state.pt.age===null ? "" : state.pt.age;
+    inp.addEventListener("change",()=>{ if(inp.value===""){state.pt.age=null;return;} const v=Math.min(120,Math.max(0,Math.round(+inp.value))); state.pt.age=v; inp.value=v; });
+    cEl.appendChild(r); }
+  { const r=document.createElement("div"); r.className="row";
+    r.innerHTML=`<div class="lab"><span class="name" id="p-sex-lab">${t("pSex")}</span></div>`;
+    r.appendChild(seg("p-sex","p-sex-lab",[t("fem"),t("mal")], ()=> state.pt.sex==="F"?1 : state.pt.sex==="M"?0 : null, v=>{ state.pt.sex = v===1?"F":"M"; }));
+    cEl.appendChild(r); }
   CLIN.forEach(c=>{
     const r=document.createElement("div"); r.className="row"; if(c.req){ r.dataset.req="1"; r.dataset.k=c.key; }
     const label=t("c_"+c.key), tip=T[LANG].tips[c.key];
@@ -516,30 +570,22 @@ function renderResult(){
   document.getElementById("pmargin").textContent = pos ? t("mAbove")(d) : t("mBelow")(d);
   document.getElementById("dot").style.left = (100*pc)+"%";
   document.getElementById("exflag").hidden = !state.example;
+  const saved = upsertRecord(r);
+  const bits=[];
+  if (state.pt.name.trim()) bits.push(`<b>${esc(state.pt.name.trim())}</b>`);
+  if (state.pt.age!==null) bits.push(`${state.pt.age} ${t("years")}`);
+  if (state.pt.sex) bits.push(state.pt.sex==="F"?t("fem"):t("mal"));
+  document.getElementById("ptline").innerHTML = bits.join(" · ") +
+    (saved ? `<span class="ok">✓ ${t("savedMsg")}</span>` : `<span class="hint">${t("saveHint")}</span>`);
   const n = GENES.filter(g=>state.geno[g.id]===1).length;
   document.getElementById("kcount").textContent = n+" / 7";
   document.getElementById("kprs").textContent = r.prs.toFixed(2);
   document.getElementById("kz").textContent = (r.z>=0?"+":"−")+Math.abs(r.z).toFixed(2)+" SD";
-  // stacked bar: carried variants first (heaviest first), then the ones not carried
-  const stack=document.getElementById("stack"), avgEl=document.getElementById("avg");
-  stack.querySelectorAll(".seg7").forEach(e=>e.remove());
-  const narrow = window.matchMedia && matchMedia("(max-width:640px)").matches;
-  const carried=ORDER.filter(g=>state.geno[g.id]===1), notc=ORDER.filter(g=>state.geno[g.id]!==1);
-  [...carried, ...notc].forEach((g,i)=>{
-    const on=state.geno[g.id]===1, el=document.createElement("div");
-    el.className="seg7"+(on?"":" off"); el.style.width=(100*g.w/WMAX)+"%";
-    if (on) el.style.background = (i%2) ? "var(--accent-2)" : "var(--accent)";
-    el.textContent = (100*g.w/WMAX) > (narrow ? 13 : 8.5) ? g.gene : "";
-    el.title=g.gene+" · "+(on?t("segC"):t("segN"));
-    stack.insertBefore(el, avgEl);
-  });
-  avgEl.style.left=(100*MU/WMAX)+"%";
-  document.getElementById("gpsum").textContent = t("gpSum")(n, (100*r.prs/WMAX).toFixed(0));
+  document.getElementById("gpsum").textContent = t("gpSum")(n);
   const vl=document.getElementById("vlist"); vl.innerHTML="";
-  ORDER.forEach((g,i)=>{
+  GENES.forEach(g=>{
     const on=state.geno[g.id]===1, li=document.createElement("li"); li.className=on?"on":"";
     li.innerHTML=`<div class="vh"><span class="g">${g.gene}</span><span class="st">${on?"✓ "+t("car"):t("non")}</span></div>
-      <div class="wrow"><div class="wbar"><span style="width:${(100*g.w/ORDER[0].w).toFixed(0)}%"></span></div><span class="wl">${t("rank")(i+1)}</span></div>
       <span class="rs">${g.rs}</span>`;
     vl.appendChild(li);
   });
@@ -557,16 +603,56 @@ function renderResult(){
 function setView(v){
   state.view=v;
   document.querySelector(".wrap").dataset.view = v;
-  ["start","in","calc","out"].forEach(k=>{ document.getElementById("panel-"+k).hidden = ({start:"start",input:"in",calc:"calc",result:"out"})[v]!==k; });
+  ["start","in","calc","out","list"].forEach(k=>{ document.getElementById("panel-"+k).hidden = ({start:"start",input:"in",calc:"calc",result:"out",list:"list"})[v]!==k; });
   if (v==="result") renderResult();
+  if (v==="list") renderList();
 }
 function show(v){
   setView(v);
   try{ window.scrollTo({top:0, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth"}); }catch(e){ window.scrollTo(0,0); }
   if (v==="result") document.getElementById("h-out").focus({preventScroll:true});
+  if (v==="list") document.getElementById("h-list").focus({preventScroll:true});
   if (v==="input") { const f=document.querySelector("#panel-in .seg button"); if (f) f.focus({preventScroll:true}); }
 }
-function relabel(){ applyStatic(); buildInputs(); if (state.view==="result") renderResult(); }
+function relabel(){ applyStatic(); buildInputs(); if (state.view==="result") renderResult(); if (state.view==="list") renderList(); }
+
+/* ---------- patient list ---------- */
+let prevView="start", clearArmed=false;
+function fmtDate(iso){ try{ return new Date(iso).toLocaleDateString(LANG==="ko"?"ko-KR":"en-GB",{year:"numeric",month:"short",day:"numeric"}); }catch(e){ return String(iso).slice(0,10); } }
+function renderList(){
+  const tb=document.getElementById("ltab"); tb.innerHTML="";
+  document.getElementById("list-sum").textContent = t("listSum")(RECS.length);
+  document.getElementById("list-empty").hidden = RECS.length>0;
+  document.querySelector(".lwrap").hidden = RECS.length===0;
+  RECS.forEach(r=>{
+    const hi=r.p>=0.5, tr=document.createElement("tr");
+    tr.innerHTML=`<td>${esc(r.name)}</td><td data-l="${t("lh2")}">${r.age??"—"}</td><td data-l="${t("lh3")}">${r.sex==="F"?t("fem"):r.sex==="M"?t("mal"):"—"}</td>
+      <td class="mono" data-l="${t("lh4")}">${r.p.toFixed(2)}</td><td data-l="${t("lh5")}"><span class="grp ${hi?"hi":"lo"}">${hi?t("hiG"):t("loG")}</span></td>
+      <td data-l="${t("lh6")}">${r.n} / 7</td><td data-l="${t("lh7")}">${fmtDate(r.saved)}</td>
+      <td class="act"><button type="button" data-open="${r.id}">${t("openB")}</button><button type="button" class="del" data-del="${r.id}">${t("delB")}</button></td>`;
+    tb.appendChild(tr);
+  });
+  updateCount();
+}
+function openRecord(id){
+  const r=RECS.find(x=>x.id===id); if(!r) return;
+  state.geno={...r.geno}; state.clin={...EMPTY_CLIN(), ...r.clin}; state.pt={name:r.name, age:r.age, sex:r.sex}; state.example=!!r.example; state.recId=r.id;
+  buildInputs(); show("result");
+}
+function newPatient(){
+  GENES.forEach(g=>state.geno[g.id]=null); state.clin=EMPTY_CLIN(); state.pt=EMPTY_PT(); state.example=false; state.recId=null;
+  buildInputs(); show("input");
+}
+function tableRows(){
+  const head=["name_or_id","age","sex","score","group","variants_carried",...GENES.map(g=>g.gene+"_"+g.rs),"bisphosphonate","oral_bisphosphonate","tooth_extraction","bmi_category","hypertension","rheumatoid_arthritis","glucocorticoid","denosumab","bisphosphonate_and_denosumab","treatment_months","dental_implant","example","saved"];
+  const yn=v=> v===1?"yes":v===0?"no":"";
+  const rows=RECS.map(r=>[r.name, r.age??"", r.sex??"", r.p.toFixed(3), r.p>=0.5?"higher-risk":"lower-risk", r.n,
+    ...GENES.map(g=> r.geno[g.id]===1?"carrier":r.geno[g.id]===0?"non-carrier":""),
+    yn(r.clin.bp), yn(r.clin.po), yn(r.clin.ext), (r.clin.bmi===null||r.clin.bmi===undefined)?"":T.en.bmiL[r.clin.bmi],
+    yn(r.clin.htn), yn(r.clin.ra), yn(r.clin.ste), yn(r.clin.deno), yn(r.clin.bd), r.clin.mm??"", yn(r.clin.imp), r.example?"yes":"no", r.saved]);
+  return [head, ...rows];
+}
+function listMsg(m){ const el=document.getElementById("list-msg"); el.textContent=m; clearTimeout(listMsg._t); listMsg._t=setTimeout(()=>{el.textContent="";},4000); }
 
 let rafId=0, toId=0;
 function runCalc(){
@@ -599,12 +685,33 @@ document.getElementById("example").addEventListener("click",()=>{
   state.clin = {bmi:1, htn:1, ra:0, ste:0, bp:1, deno:0, bd:0, po:1, mm:36, ext:1, imp:0};
   buildInputs(); state.example=true;
 });
+document.getElementById("open-list").addEventListener("click",()=>{ if(state.view!=="list") prevView = state.view==="calc" ? "input" : state.view; clearArmed=false; show("list"); });
+document.getElementById("list-back").addEventListener("click",()=>show(prevView||"start"));
+document.getElementById("new-pt").addEventListener("click",newPatient);
+document.getElementById("new-pt2").addEventListener("click",newPatient);
+document.getElementById("ltab").addEventListener("click",e=>{
+  const o=e.target.closest("[data-open]"), d=e.target.closest("[data-del]");
+  if (o) openRecord(o.dataset.open);
+  if (d){ RECS=RECS.filter(x=>x.id!==d.dataset.del); if(state.recId===d.dataset.del) state.recId=null; saveRecs(RECS); renderList(); }
+});
+document.getElementById("csv").addEventListener("click",()=>{
+  const csv="﻿"+tableRows().map(r=>r.map(v=>{ const x=String(v); return /[",\n]/.test(x) ? '"'+x.replace(/"/g,'""')+'"' : x; }).join(",")).join("\n");
+  try{ const a=document.createElement("a"); a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"}));
+    a.download="MARI_patients_"+new Date().toISOString().slice(0,10)+".csv"; document.body.appendChild(a); a.click(); a.remove(); listMsg(t("csvDone")); }catch(e){ listMsg(t("copyFail")); }
+});
+document.getElementById("copy").addEventListener("click",()=>{
+  const tsv=tableRows().map(r=>r.join("\t")).join("\n");
+  try{ navigator.clipboard.writeText(tsv).then(()=>listMsg(t("copied")),()=>listMsg(t("copyFail"))); }catch(e){ listMsg(t("copyFail")); }
+});
+document.getElementById("clear").addEventListener("click",()=>{
+  if(!clearArmed){ clearArmed=true; listMsg(t("clearQ")); setTimeout(()=>{clearArmed=false;},5000); return; }
+  clearArmed=false; RECS=[]; state.recId=null; saveRecs(RECS); renderList();
+});
 document.querySelectorAll(".lang button").forEach(b=>b.addEventListener("click",()=>{
   LANG=b.dataset.l; try{ localStorage.setItem("mronj-lang", LANG); }catch(e){} relabel(); }));
 document.addEventListener("keydown",e=>{ if (e.key==="Escape" && document.activeElement && document.activeElement.classList.contains("ib")) document.activeElement.blur(); });
-let rz; window.addEventListener("resize",()=>{ clearTimeout(rz); rz=setTimeout(()=>{ if (state.view==="result") renderResult(); },150); });
 
-applyStatic(); buildInputs(); setView("start");
+applyStatic(); buildInputs(); updateCount(); setView("start");
 </script>
 
 </body>
