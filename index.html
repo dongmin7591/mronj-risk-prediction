@@ -93,6 +93,7 @@ input.txt{width:min(240px,52vw);text-align:left;font-family:var(--f-ui)}
 .seg button[aria-pressed="true"]{background:var(--accent-soft);color:var(--accent);font-weight:700}
 .inp{font:inherit;font-size:13px;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:6px 8px;max-width:100%}
 input.inp{width:5.5em;font-family:var(--f-data);text-align:right}
+select.cty{width:14em;max-width:100%}
 .numw{display:inline-flex;align-items:center;gap:6px}
 .tools{display:flex;gap:8px;flex-wrap:wrap}
 .chip{font:inherit;font-size:12.5px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:5px 11px;cursor:pointer}
@@ -305,7 +306,7 @@ td.mono{font-family:var(--f-data)}
         <span class="lbtns"><button class="chip" id="csv" type="button" disabled></button><button class="chip" id="copy" type="button" disabled></button><button class="chip danger" id="clear" type="button" disabled></button></span>
       </div>
       <p class="note lmsg" id="list-msg" role="status"></p>
-      <div class="lwrap"><table class="ltable"><thead><tr><th class="ck"></th><th data-i18n="lh1"></th><th data-i18n="lh2"></th><th data-i18n="lh3"></th><th data-i18n="lh4"></th><th data-i18n="lh5"></th><th data-i18n="lh6"></th><th data-i18n="lh7"></th><th></th></tr></thead><tbody id="ltab"></tbody></table></div>
+      <div class="lwrap"><table class="ltable"><thead><tr><th class="ck"></th><th data-i18n="lh1"></th><th data-i18n="lh2"></th><th data-i18n="lh3"></th><th data-i18n="lh8"></th><th data-i18n="lh4"></th><th data-i18n="lh5"></th><th data-i18n="lh6"></th><th data-i18n="lh7"></th><th></th></tr></thead><tbody id="ltab"></tbody></table></div>
       <p class="note" id="list-empty" data-i18n="listEmpty" hidden></p>
     </section>
   </main>
@@ -332,7 +333,7 @@ const T = {
   listB:"Patient list", listT:"Saved patient results", listSum:n=>`${n} patient${n===1?"":"s"}`,
   listNote:"Results are saved automatically when a name or ID is entered. They are stored only in this browser on this device and are not sent anywhere. Use an ID instead of a full name on shared or public computers.",
   listEmpty:"No saved results yet. Enter a patient name or ID before viewing the result.",
-  lh1:"Name / ID", lh2:"Age", lh3:"Sex", lh4:"Score", lh5:"Group", lh6:"Variants", lh7:"Saved", hiG:"Higher-risk", loG:"Lower-risk",
+  lh1:"Name / ID", lh2:"Age", lh3:"Sex", lh4:"Score", lh5:"Group", lh6:"Variants", lh7:"Saved", lh8:"Country", pCountry:"Country", hiG:"Higher-risk", loG:"Lower-risk",
   openB:"Open", delB:"Delete", selAll:"Select all", selN:n=>`${n} selected`, csvB:n=>`Download CSV${n?` (${n})`:""}`, copyB:n=>`Copy${n?` (${n})`:""}`, clearB:n=>`Delete${n?` (${n})`:""}`, clearQ:n=>`Select Delete again to remove ${n} patient${n===1?"":"s"}.`, delDone:n=>`${n} deleted.`, copied:"Table copied.", copyFail:"Copy failed. Select the table and copy it manually.", csvDone:"CSV file created.",
   newB:"New patient", backL:"Back", saveHint:"Not saved: enter a patient name or ID to add this result to the patient list.", savedMsg:"Saved to patient list",
   c_bp:"Bisphosphonate therapy", c_po:"Oral bisphosphonate", c_ext:"History of tooth extraction",
@@ -374,7 +375,7 @@ const T = {
   listB:"환자 목록", listT:"저장된 환자 결과", listSum:n=>`${n}명`,
   listNote:"이름이나 ID를 입력하면 결과가 자동으로 저장됩니다. 이 기기의 브라우저에만 저장되며 외부로 전송되지 않습니다. 공용 컴퓨터에서는 실명 대신 ID를 사용하세요.",
   listEmpty:"저장된 결과가 없습니다. 결과를 보기 전에 환자 이름이나 ID를 입력하세요.",
-  lh1:"이름 / ID", lh2:"나이", lh3:"성별", lh4:"점수", lh5:"판정", lh6:"보유 변이", lh7:"저장일", hiG:"고위험군", loG:"저위험군",
+  lh1:"이름 / ID", lh2:"나이", lh3:"성별", lh4:"점수", lh5:"판정", lh6:"보유 변이", lh7:"저장일", lh8:"국가", pCountry:"국가", hiG:"고위험군", loG:"저위험군",
   openB:"열기", delB:"삭제", selAll:"전체 선택", selN:n=>`${n}명 선택`, csvB:n=>`CSV 내려받기${n?` (${n})`:""}`, copyB:n=>`복사${n?` (${n})`:""}`, clearB:n=>`삭제${n?` (${n})`:""}`, clearQ:n=>`${n}명을 삭제하려면 삭제를 한 번 더 누르세요.`, delDone:n=>`${n}명을 삭제했습니다.`, copied:"표를 복사했습니다.", copyFail:"복사하지 못했습니다. 표를 선택해 직접 복사하세요.", csvDone:"CSV 파일을 만들었습니다.",
   newB:"새 환자", backL:"돌아가기", saveHint:"저장되지 않음: 환자 이름이나 ID를 입력하면 이 결과가 환자 목록에 추가됩니다.", savedMsg:"환자 목록에 저장됨",
   c_bp:"비스포스포네이트 투여", c_po:"경구 비스포스포네이트", c_ext:"발치 이력",
@@ -448,7 +449,10 @@ window.__score = score;
 
 /* ---------- state: nothing pre-selected ---------- */
 const EMPTY_CLIN = () => ({bmi:null, htn:null, ra:null, ste:null, bp:null, deno:null, bd:null, po:null, mm:null, ext:null, imp:null});
-const EMPTY_PT = () => ({name:"", age:null, sex:null});
+const EMPTY_PT = () => ({name:"", age:null, sex:null, country:"KR"});
+/* ISO 3166-1 alpha-2; names come from the browser in the current language */
+const COUNTRIES = "AF AX AL DZ AS AD AO AI AQ AG AR AM AW AU AT AZ BS BH BD BB BY BE BZ BJ BM BT BO BQ BA BW BV BR IO BN BG BF BI CV KH CM CA KY CF TD CL CN CX CC CO KM CG CD CK CR CI HR CU CW CY CZ DK DJ DM DO EC EG SV GQ ER EE SZ ET FK FO FJ FI FR GF PF TF GA GM GE DE GH GI GR GL GD GP GU GT GG GN GW GY HT HM VA HN HK HU IS IN ID IR IQ IE IM IL IT JM JP JE JO KZ KE KI KP KR KW KG LA LV LB LS LR LY LI LT LU MO MG MW MY MV ML MT MH MQ MR MU YT MX FM MD MC MN ME MS MA MZ MM NA NR NP NL NC NZ NI NE NG NU NF MK MP NO OM PK PW PS PA PG PY PE PH PN PL PT PR QA RE RO RU RW BL SH KN LC MF PM VC WS SM ST SA SN RS SC SL SG SX SK SI SB SO ZA GS SS ES LK SD SR SJ SE CH SY TW TJ TZ TH TL TG TK TO TT TN TR TM TC TV UG UA AE GB US UM UY UZ VU VE VN VG VI WF EH YE ZM ZW".split(" ");
+function cname(code, lang){ code=code||"KR"; try{ return new Intl.DisplayNames([lang||(LANG==="ko"?"ko":"en")],{type:"region"}).of(code)||code; }catch(e){ return code; } }
 const state = {view:"start", geno:{}, clin:EMPTY_CLIN(), pt:EMPTY_PT(), example:false, recId:null};
 GENES.forEach(g=> state.geno[g.id]=null);
 const REQ_N = GENES.length + CLIN.filter(c=>c.req).length;
@@ -462,7 +466,7 @@ let RECS = loadRecs();
 function upsertRecord(r){
   if (!state.pt.name.trim()) return false;
   if (!state.recId) state.recId = "r"+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
-  const rec = {id:state.recId, name:state.pt.name.trim(), age:state.pt.age, sex:state.pt.sex,
+  const rec = {id:state.recId, name:state.pt.name.trim(), age:state.pt.age, sex:state.pt.sex, country:state.pt.country||"KR",
     geno:{...state.geno}, clin:{...state.clin}, p:r.p, n:GENES.filter(g=>state.geno[g.id]===1).length, saved:new Date().toISOString(), example:state.example};
   const i = RECS.findIndex(x=>x.id===rec.id);
   if (i>=0) RECS[i]=rec; else RECS.unshift(rec);
@@ -521,6 +525,15 @@ function buildInputs(){
     r.innerHTML=`<div class="lab"><span class="name" id="p-sex-lab">${t("pSex")}</span></div>`;
     r.appendChild(seg("p-sex","p-sex-lab",[t("fem"),t("mal")], ()=> state.pt.sex==="F"?1 : state.pt.sex==="M"?0 : null, v=>{ state.pt.sex = v===1?"F":"M"; }));
     cEl.appendChild(r); }
+  { const r=document.createElement("div"); r.className="row";
+    r.innerHTML=`<div class="lab"><label class="name" for="p-country">${t("pCountry")}</label></div>`;
+    const sel=document.createElement("select"); sel.id="p-country"; sel.className="inp cty";
+    const coll=new Intl.Collator(LANG==="ko"?"ko":"en");
+    const list=COUNTRIES.filter(c=>c!=="KR").map(c=>[c,cname(c)]).sort((a,b)=>coll.compare(a[1],b[1]));
+    sel.innerHTML=`<option value="KR">${esc(cname("KR"))}</option><option disabled>──────────</option>`+list.map(([c,n])=>`<option value="${c}">${esc(n)}</option>`).join("");
+    sel.value=state.pt.country||"KR";
+    sel.addEventListener("change",()=>{ state.pt.country=sel.value; });
+    r.appendChild(sel); cEl.appendChild(r); }
   CLIN.forEach(c=>{
     const r=document.createElement("div"); r.className="row"; if(c.req){ r.dataset.req="1"; r.dataset.k=c.key; }
     const label=t("c_"+c.key), tip=T[LANG].tips[c.key];
@@ -592,6 +605,7 @@ function renderResult(){
   if (state.pt.name.trim()) bits.push(`<b>${esc(state.pt.name.trim())}</b>`);
   if (state.pt.age!==null) bits.push(`${state.pt.age} ${t("years")}`);
   if (state.pt.sex) bits.push(state.pt.sex==="F"?t("fem"):t("mal"));
+  bits.push(esc(cname(state.pt.country)));
   document.getElementById("ptline").innerHTML = bits.join(" · ") +
     (saved ? `<span class="ok">✓ ${t("savedMsg")}</span>` : `<span class="hint">${t("saveHint")}</span>`);
   const n = GENES.filter(g=>state.geno[g.id]===1).length;
@@ -654,7 +668,7 @@ function renderList(){
   document.getElementById("lbar").hidden = RECS.length===0;
   RECS.forEach(r=>{
     const hi=r.p>=0.5, tr=document.createElement("tr");
-    tr.innerHTML=`<td class="ck"><input type="checkbox" data-sel="${r.id}" aria-label="${t("selAll")}: ${esc(r.name)}"${SEL.has(r.id)?" checked":""}></td><td>${esc(r.name)}</td><td data-l="${t("lh2")}">${r.age??"—"}</td><td data-l="${t("lh3")}">${r.sex==="F"?t("fem"):r.sex==="M"?t("mal"):"—"}</td>
+    tr.innerHTML=`<td class="ck"><input type="checkbox" data-sel="${r.id}" aria-label="${t("selAll")}: ${esc(r.name)}"${SEL.has(r.id)?" checked":""}></td><td>${esc(r.name)}</td><td data-l="${t("lh2")}">${r.age??"—"}</td><td data-l="${t("lh3")}">${r.sex==="F"?t("fem"):r.sex==="M"?t("mal"):"—"}</td><td data-l="${t("lh8")}">${esc(cname(r.country))}</td>
       <td class="mono" data-l="${t("lh4")}">${r.p.toFixed(2)}</td><td data-l="${t("lh5")}"><span class="grp ${hi?"hi":"lo"}">${hi?t("hiG"):t("loG")}</span></td>
       <td data-l="${t("lh6")}">${r.n} / 7</td><td data-l="${t("lh7")}">${fmtDate(r.saved)}</td>
       <td class="act"><button type="button" data-open="${r.id}">${t("openB")}</button><button type="button" class="del" data-del="${r.id}">${t("delB")}</button></td>`;
@@ -664,7 +678,7 @@ function renderList(){
 }
 function openRecord(id){
   const r=RECS.find(x=>x.id===id); if(!r) return;
-  state.geno={...r.geno}; state.clin={...EMPTY_CLIN(), ...r.clin}; state.pt={name:r.name, age:r.age, sex:r.sex}; state.example=!!r.example; state.recId=r.id;
+  state.geno={...r.geno}; state.clin={...EMPTY_CLIN(), ...r.clin}; state.pt={name:r.name, age:r.age, sex:r.sex, country:r.country||"KR"}; state.example=!!r.example; state.recId=r.id;
   buildInputs(); show("result");
 }
 function newPatient(){
@@ -672,9 +686,9 @@ function newPatient(){
   buildInputs(); show("input");
 }
 function tableRows(recs){
-  const head=["name_or_id","age","sex","score","group","variants_carried",...GENES.map(g=>g.gene+"_"+g.rs),"bisphosphonate","oral_bisphosphonate","tooth_extraction","bmi_category","hypertension","rheumatoid_arthritis","glucocorticoid","denosumab","bisphosphonate_and_denosumab","treatment_months","dental_implant","example","saved"];
+  const head=["name_or_id","age","sex","country","score","group","variants_carried",...GENES.map(g=>g.gene+"_"+g.rs),"bisphosphonate","oral_bisphosphonate","tooth_extraction","bmi_category","hypertension","rheumatoid_arthritis","glucocorticoid","denosumab","bisphosphonate_and_denosumab","treatment_months","dental_implant","example","saved"];
   const yn=v=> v===1?"yes":v===0?"no":"";
-  const rows=recs.map(r=>[r.name, r.age??"", r.sex??"", r.p.toFixed(3), r.p>=0.5?"higher-risk":"lower-risk", r.n,
+  const rows=recs.map(r=>[r.name, r.age??"", r.sex??"", cname(r.country,"en"), r.p.toFixed(3), r.p>=0.5?"higher-risk":"lower-risk", r.n,
     ...GENES.map(g=> r.geno[g.id]===1?"carrier":r.geno[g.id]===0?"non-carrier":""),
     yn(r.clin.bp), yn(r.clin.po), yn(r.clin.ext), (r.clin.bmi===null||r.clin.bmi===undefined)?"":T.en.bmiL[r.clin.bmi],
     yn(r.clin.htn), yn(r.clin.ra), yn(r.clin.ste), yn(r.clin.deno), yn(r.clin.bd), r.clin.mm??"", yn(r.clin.imp), r.example?"yes":"no", r.saved]);
